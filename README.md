@@ -1,14 +1,5 @@
-# flutter_cognito_plugin
+# Flutter Cognito Plugin
 
-A new Flutter plugin.
+An AWS Cognito plugin for flutter.
+Originally created for use at [Jaaga Labs](https://www.jaaga.in/labs).
 
-## Getting Started
-
-This project is a starting point for a Flutter
-[plug-in package](https://flutter.io/developing-packages/),
-a specialized package that includes platform-specific implementation code for
-Android and/or iOS.
-
-For help getting started with Flutter, view our 
-[online documentation](https://flutter.io/docs), which offers tutorials, 
-samples, guidance on mobile development, and a full API reference.
