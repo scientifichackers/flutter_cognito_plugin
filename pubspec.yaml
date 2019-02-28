@@ -1,8 +1,8 @@
 name: flutter_cognito_plugin
-description: A new Flutter plugin.
+description: An AWS Cognito plugin for flutter.
 version: 0.0.1
-author:
-homepage:
+author: Dev Aggarwal <devpxy@gmail.com>
+homepage: https://github.com/pycampers/flutter_pdf_viewer
 
 environment:
   sdk: ">=2.1.0 <3.0.0"

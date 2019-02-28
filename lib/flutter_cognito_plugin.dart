@@ -198,10 +198,10 @@ class Cognito {
   }
 
   static Future<SignUpResult> signUp(
-      String username,
-      String password, [
-        Map<String, dynamic> userAttributes,
-      ]) async {
+    String username,
+    String password, [
+    Map<String, dynamic> userAttributes,
+  ]) async {
     return SignUpResult.fromMsg(
       await _platform.invokeMethod("signUp", {
         "username": username,
@@ -212,9 +212,9 @@ class Cognito {
   }
 
   static Future<SignUpResult> confirmSignUp(
-      String username,
-      String signUpChallengeResponse,
-      ) async {
+    String username,
+    String signUpChallengeResponse,
+  ) async {
     return SignUpResult.fromMsg(
       await _platform.invokeMethod("confirmSignUp", {
         "username": username,
@@ -224,8 +224,8 @@ class Cognito {
   }
 
   static Future<SignUpResult> resendSignUp(
-      String username,
-      ) async {
+    String username,
+  ) async {
     return SignUpResult.fromMsg(
       await _platform.invokeMethod("resendSignUp", {
         "username": username,
@@ -243,8 +243,8 @@ class Cognito {
   }
 
   static Future<SignInResult> confirmSignIn(
-      String signInChallengeResponse,
-      ) async {
+    String signInChallengeResponse,
+  ) async {
     return SignInResult.fromMsg(
       await _platform.invokeMethod("confirmSignIn", {
         "signInChallengeResponse": signInChallengeResponse,
@@ -261,9 +261,9 @@ class Cognito {
   }
 
   static Future<ForgotPasswordResult> confirmForgotPassword(
-      String newPassword,
-      String forgotPasswordChallengeResponse,
-      ) async {
+    String newPassword,
+    String forgotPasswordChallengeResponse,
+  ) async {
     return ForgotPasswordResult.fromMsg(
       await _platform.invokeMethod("confirmForgotPassword", {
         "newPassword": newPassword,
@@ -297,8 +297,8 @@ class Cognito {
   }
 
   static Future<List<UserCodeDeliveryDetails>> updateUserAttributes(
-      Map<String, dynamic> userAttributes,
-      ) async {
+    Map<String, dynamic> userAttributes,
+  ) async {
     List uL = await _platform.invokeMethod("updateUserAttributes", {
       "userAttributes": userAttributes ?? {},
     });
@@ -308,13 +308,13 @@ class Cognito {
   }
 
   static Future<void> confirmUpdateUserAttribute(
-      String attributeName,
-      String updateUserAttributeChallengeResponse,
-      ) async {
+    String attributeName,
+    String updateUserAttributeChallengeResponse,
+  ) async {
     await _platform.invokeMethod("confirmUpdateUserAttribute", {
       "attributeName": attributeName,
       "updateUserAttributeChallengeResponse":
-      updateUserAttributeChallengeResponse
+          updateUserAttributeChallengeResponse
     });
   }
 }
