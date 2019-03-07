@@ -164,6 +164,59 @@ const _platform = const MethodChannel('com.pycampers.fluttercognitoplugin');
 typedef OnUserStateChange(UserStateDetails userState);
 
 class Cognito {
+  /// The number of times to automatically retry sending a request.
+  ///
+  /// Useful for cases where network is flaky.
+  ///
+  /// Takes extra care to retry only for a network related error,
+  /// and not a client error, like OTP incorrect, etc.
+  ///
+  /// 0 -> No retry.
+  /// Non-zero number -> Retry specified number of times.
+  /// null -> Infinite retry.
+  static int autoRetryLimit = 0;
+
+  /// The delay before retrying.
+  static Duration retryDelay = Duration();
+
+  /// Invokes a method with specified [MethodChannel] (platform).
+  ///
+  /// This is useful for other plugins that want
+  /// to leverage the auto retry capabilities of this plugin.
+  static Future<T> invokeMethodWithPlatform<T>(
+    MethodChannel platform,
+    String method, [
+    dynamic arguments,
+  ]) async {
+    var tries = 0;
+    while (true) {
+      tries += 1;
+      try {
+        return await platform.invokeMethod<T>(method, arguments);
+      } catch (e) {
+        if (autoRetryLimit != null && tries > autoRetryLimit) {
+          rethrow;
+        }
+        if (!(e is PlatformException)) {
+          rethrow;
+        }
+        if (e.code == "ApolloException" ||
+            (e.code == "com.amazonaws.AmazonClientException" &&
+                e.message.startsWith("Unable to execute HTTP request"))) {
+          print("[Cognito] Ignoring - $e");
+          print("[Cognito] Retry after $retryDelay");
+          await Future.delayed(retryDelay);
+          continue;
+        }
+        rethrow;
+      }
+    }
+  }
+
+  static invokeMethod(String method, [dynamic arguments]) {
+    return invokeMethodWithPlatform(_platform, method, arguments);
+  }
+
   /// Initializes the AWS mobile client.
   ///
   /// This MUST be called before using any other methods under this class.
@@ -178,7 +231,7 @@ class Cognito {
   /// }
   /// ```
   static Future<UserStateDetails> initialize() async {
-    return UserStateDetails.fromMsg(await _platform.invokeMethod("initialize"));
+    return UserStateDetails.fromMsg(await invokeMethod("initialize"));
   }
 
   /// Registers a callback that gets called every-time the UserState changes.
@@ -203,7 +256,7 @@ class Cognito {
     Map<String, dynamic> userAttributes,
   ]) async {
     return SignUpResult.fromMsg(
-      await _platform.invokeMethod("signUp", {
+      await invokeMethod("signUp", {
         "username": username,
         "password": password,
         "userAttributes": userAttributes ?? {},
@@ -216,7 +269,7 @@ class Cognito {
     String signUpChallengeResponse,
   ) async {
     return SignUpResult.fromMsg(
-      await _platform.invokeMethod("confirmSignUp", {
+      await invokeMethod("confirmSignUp", {
         "username": username,
         "signUpChallengeResponse": signUpChallengeResponse,
       }),
@@ -227,7 +280,7 @@ class Cognito {
     String username,
   ) async {
     return SignUpResult.fromMsg(
-      await _platform.invokeMethod("resendSignUp", {
+      await invokeMethod("resendSignUp", {
         "username": username,
       }),
     );
@@ -235,7 +288,7 @@ class Cognito {
 
   static Future<SignInResult> signIn(String username, String password) async {
     return SignInResult.fromMsg(
-      await _platform.invokeMethod("signIn", {
+      await invokeMethod("signIn", {
         "username": username,
         "password": password,
       }),
@@ -246,7 +299,7 @@ class Cognito {
     String signInChallengeResponse,
   ) async {
     return SignInResult.fromMsg(
-      await _platform.invokeMethod("confirmSignIn", {
+      await invokeMethod("confirmSignIn", {
         "signInChallengeResponse": signInChallengeResponse,
       }),
     );
@@ -254,7 +307,7 @@ class Cognito {
 
   static Future<ForgotPasswordResult> forgotPassword(String username) async {
     return ForgotPasswordResult.fromMsg(
-      await _platform.invokeMethod("forgotPassword", {
+      await invokeMethod("forgotPassword", {
         "username": username,
       }),
     );
@@ -265,7 +318,7 @@ class Cognito {
     String forgotPasswordChallengeResponse,
   ) async {
     return ForgotPasswordResult.fromMsg(
-      await _platform.invokeMethod("confirmForgotPassword", {
+      await invokeMethod("confirmForgotPassword", {
         "newPassword": newPassword,
         "forgotPasswordChallengeResponse": forgotPasswordChallengeResponse,
       }),
@@ -274,32 +327,34 @@ class Cognito {
 
   static Future<UserStateDetails> getUserStateDetails() async {
     return UserStateDetails.fromMsg(
-      await _platform.invokeMethod("currentUserState"),
+      await invokeMethod("currentUserState"),
     );
   }
 
-  static Future<void> signOut() async =>
-      await _platform.invokeMethod("signOut");
+  static Future<void> signOut() async => await invokeMethod("signOut");
 
-  static Future<String> getUsername() async =>
-      await _platform.invokeMethod("getUsername");
+  static Future<String> getUsername() async {
+    return await invokeMethod("getUsername");
+  }
 
-  static Future<bool> isSignedIn() async =>
-      await _platform.invokeMethod("isSignedIn");
+  static Future<bool> isSignedIn() async {
+    return await invokeMethod("isSignedIn");
+  }
 
-  static Future<String> getIdentityId() async =>
-      await _platform.invokeMethod("getIdentityId");
+  static Future<String> getIdentityId() async {
+    return await invokeMethod("getIdentityId");
+  }
 
   static Future<Map<String, dynamic>> getUserAttributes() async {
     return Map<String, dynamic>.from(
-      await _platform.invokeMethod("getUserAttributes"),
+      await invokeMethod("getUserAttributes"),
     );
   }
 
   static Future<List<UserCodeDeliveryDetails>> updateUserAttributes(
     Map<String, dynamic> userAttributes,
   ) async {
-    List uL = await _platform.invokeMethod("updateUserAttributes", {
+    List uL = await invokeMethod("updateUserAttributes", {
       "userAttributes": userAttributes ?? {},
     });
     return List<UserCodeDeliveryDetails>.from(
@@ -311,7 +366,7 @@ class Cognito {
     String attributeName,
     String updateUserAttributeChallengeResponse,
   ) async {
-    await _platform.invokeMethod("confirmUpdateUserAttribute", {
+    await invokeMethod("confirmUpdateUserAttribute", {
       "attributeName": attributeName,
       "updateUserAttributeChallengeResponse":
           updateUserAttributeChallengeResponse
