@@ -163,6 +163,22 @@ const _platform = const MethodChannel('com.pycampers.fluttercognitoplugin');
 
 typedef OnUserStateChange(UserStateDetails userState);
 
+var _cognitoErrorRules = [
+  ["ApolloException", "Failed to parse http response"],
+  ["ApolloException", "Failed to execute http call"],
+  ["com.amazonaws.AmazonClientException", "Unable to execute HTTP request"],
+];
+
+bool _satisfiesRules(PlatformException e) {
+  for (var rule in _cognitoErrorRules) {
+    if (e.code.toUpperCase().contains(rule[0].toUpperCase()) &&
+        e.message.toUpperCase().contains(rule[1].toUpperCase())) {
+      return true;
+    }
+  }
+  return false;
+}
+
 class Cognito {
   /// The number of times to automatically retry sending a request.
   ///
@@ -200,11 +216,11 @@ class Cognito {
         if (!(e is PlatformException)) {
           rethrow;
         }
-        if (e.code == "ApolloException" ||
-            (e.code == "com.amazonaws.AmazonClientException" &&
-                e.message.startsWith("Unable to execute HTTP request"))) {
-          print("[Cognito] Ignoring - $e");
-          print("[Cognito] Retry after $retryDelay");
+        if (_satisfiesRules(e)) {
+          print("[Cognito] Ignoring exception - $e");
+          print(
+            "[Cognito] Will retry after $retryDelay (tries: $tries, limit: $autoRetryLimit)",
+          );
           await Future.delayed(retryDelay);
           continue;
         }
