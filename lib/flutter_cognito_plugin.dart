@@ -269,7 +269,7 @@ class Cognito {
   static Future<SignUpResult> signUp(
     String username,
     String password, [
-    Map<String, dynamic> userAttributes,
+    Map<String, String> userAttributes,
   ]) async {
     return SignUpResult.fromMsg(
       await invokeMethod("signUp", {
@@ -323,9 +323,7 @@ class Cognito {
 
   static Future<ForgotPasswordResult> forgotPassword(String username) async {
     return ForgotPasswordResult.fromMsg(
-      await invokeMethod("forgotPassword", {
-        "username": username,
-      }),
+      await invokeMethod("forgotPassword", {"username": username}),
     );
   }
 
@@ -342,12 +340,12 @@ class Cognito {
   }
 
   static Future<UserStateDetails> getUserStateDetails() async {
-    return UserStateDetails.fromMsg(
-      await invokeMethod("currentUserState"),
-    );
+    return UserStateDetails.fromMsg(await invokeMethod("currentUserState"));
   }
 
-  static Future<void> signOut() async => await invokeMethod("signOut");
+  static Future<void> signOut() async {
+    return await invokeMethod("signOut");
+  }
 
   static Future<String> getUsername() async {
     return await invokeMethod("getUsername");
@@ -361,14 +359,12 @@ class Cognito {
     return await invokeMethod("getIdentityId");
   }
 
-  static Future<Map<String, dynamic>> getUserAttributes() async {
-    return Map<String, dynamic>.from(
-      await invokeMethod("getUserAttributes"),
-    );
+  static Future<Map<String, String>> getUserAttributes() async {
+    return Map<String, String>.from(await invokeMethod("getUserAttributes"));
   }
 
   static Future<List<UserCodeDeliveryDetails>> updateUserAttributes(
-    Map<String, dynamic> userAttributes,
+    Map<String, String> userAttributes,
   ) async {
     List uL = await invokeMethod("updateUserAttributes", {
       "userAttributes": userAttributes ?? {},
@@ -385,7 +381,7 @@ class Cognito {
     await invokeMethod("confirmUpdateUserAttribute", {
       "attributeName": attributeName,
       "updateUserAttributeChallengeResponse":
-          updateUserAttributeChallengeResponse
+          updateUserAttributeChallengeResponse,
     });
   }
 }
