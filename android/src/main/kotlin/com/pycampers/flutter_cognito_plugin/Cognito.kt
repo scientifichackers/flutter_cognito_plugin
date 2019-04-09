@@ -8,19 +8,18 @@ import com.amazonaws.mobile.client.results.ForgotPasswordResult
 import com.amazonaws.mobile.client.results.SignInResult
 import com.amazonaws.mobile.client.results.SignUpResult
 import com.amazonaws.mobile.client.results.UserCodeDeliveryDetails
+import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
+import io.flutter.plugin.common.MethodChannel.Result
 
 class Cognito(val context: Context, val methodChannel: MethodChannel) : MethodCallDispatcher() {
     val awsClient = AWSMobileClient.getInstance()!!
 
-    fun initialize() {
+    fun initialize(call: MethodCall, result: Result) {
         awsClient.initialize(context, object : Callback<UserStateDetails> {
             override fun onResult(u: UserStateDetails) {
                 awsClient.addUserStateListener {
-                    methodChannel.invokeMethod(
-                            "userStateCallback",
-                            dumpUserState(it)
-                    )
+                    methodChannel.invokeMethod("userStateCallback", dumpUserState(it))
                 }
                 result.success(dumpUserState(u))
                 initialized = true
@@ -32,7 +31,7 @@ class Cognito(val context: Context, val methodChannel: MethodChannel) : MethodCa
         })
     }
 
-    fun signUp() {
+    fun signUp(call: MethodCall, result: Result) {
         val username = call.argument<String>("username")
         val password = call.argument<String>("password")
         val userAttributes = call.argument<Map<String, String>>("userAttributes")
@@ -43,7 +42,7 @@ class Cognito(val context: Context, val methodChannel: MethodChannel) : MethodCa
         })
     }
 
-    fun confirmSignUp() {
+    fun confirmSignUp(call: MethodCall, result: Result) {
         val username = call.argument<String>("username")
         val confirmationCode = call.argument<String>("confirmationCode")
 
@@ -53,7 +52,7 @@ class Cognito(val context: Context, val methodChannel: MethodChannel) : MethodCa
         })
     }
 
-    fun resendSignUp() {
+    fun resendSignUp(call: MethodCall, result: Result) {
         val username = call.argument<String>("username")
 
         awsClient.resendSignUp(username, object : Callback<SignUpResult> {
@@ -62,7 +61,7 @@ class Cognito(val context: Context, val methodChannel: MethodChannel) : MethodCa
         })
     }
 
-    fun signIn() {
+    fun signIn(call: MethodCall, result: Result) {
         val username = call.argument<String>("username")
         val password = call.argument<String>("password")
 
@@ -72,7 +71,7 @@ class Cognito(val context: Context, val methodChannel: MethodChannel) : MethodCa
         })
     }
 
-    fun confirmSignIn() {
+    fun confirmSignIn(call: MethodCall, result: Result) {
         val confirmationCode = call.argument<String>("confirmationCode")
 
         awsClient.confirmSignIn(confirmationCode, object : Callback<SignInResult> {
@@ -81,7 +80,7 @@ class Cognito(val context: Context, val methodChannel: MethodChannel) : MethodCa
         })
     }
 
-    fun forgotPassword() {
+    fun forgotPassword(call: MethodCall, result: Result) {
         val username = call.argument<String>("username")
 
         awsClient.forgotPassword(username, object : Callback<ForgotPasswordResult> {
@@ -90,7 +89,7 @@ class Cognito(val context: Context, val methodChannel: MethodChannel) : MethodCa
         })
     }
 
-    fun confirmForgotPassword() {
+    fun confirmForgotPassword(call: MethodCall, result: Result) {
         val newPassword = call.argument<String>("newPassword")
         val confirmationCode = call.argument<String>("confirmationCode")
 
@@ -100,56 +99,66 @@ class Cognito(val context: Context, val methodChannel: MethodChannel) : MethodCa
         })
     }
 
-    fun signOut() {
+    fun signOut(call: MethodCall, result: Result) {
         try {
             awsClient.signOut()
-            result.success(null)
         } catch (e: Exception) {
-            dumpException(e, result)
+            return dumpException(e, result)
         }
+        result.success(null)
     }
 
-    fun getUsername() {
+    fun getUsername(call: MethodCall, result: Result) {
+        val value: String
         try {
-            result.success(awsClient.username)
+            value = awsClient.username
         } catch (e: Exception) {
-            dumpException(e, result)
+            return dumpException(e, result)
         }
+        result.success(value)
     }
 
-    fun isSignedIn() {
+    fun isSignedIn(call: MethodCall, result: Result) {
+        val value: Boolean
         try {
-            result.success(awsClient.isSignedIn)
+            value = awsClient.isSignedIn
         } catch (e: Exception) {
-            dumpException(e, result)
+            return dumpException(e, result)
         }
+        result.success(value)
     }
 
-    fun getIdentityId() {
+    fun getIdentityId(call: MethodCall, result: Result) {
+        val value: String
         try {
-            result.success(awsClient.identityId)
+            value = awsClient.identityId
         } catch (e: Exception) {
-            dumpException(e, result)
+            return dumpException(e, result)
         }
+        result.success(value)
     }
 
-    fun currentUserState() {
+    fun currentUserState(call: MethodCall, result: Result) {
+        val value: UserStateDetails
         try {
-            result.success(dumpUserState(awsClient.currentUserState()))
+            value = awsClient.currentUserState()
         } catch (e: Exception) {
-            dumpException(e, result)
+            return dumpException(e, result)
         }
+        result.success(dumpUserState(value))
     }
 
-    fun getUserAttributes() {
+    fun getUserAttributes(call: MethodCall, result: Result) {
+        val value: Map<String, String>
         try {
-            result.success(awsClient.userAttributes)
+            value = awsClient.userAttributes
         } catch (e: Exception) {
-            dumpException(e, result)
+            return dumpException(e, result)
         }
+        result.success(value)
     }
 
-    fun updateUserAttributes() {
+    fun updateUserAttributes(call: MethodCall, result: Result) {
         val userAttributes = call.argument<Map<String, String>>("userAttributes")!!
 
         awsClient.updateUserAttributes(userAttributes, object : Callback<List<UserCodeDeliveryDetails>> {
@@ -158,7 +167,7 @@ class Cognito(val context: Context, val methodChannel: MethodChannel) : MethodCa
         })
     }
 
-    fun confirmUpdateUserAttribute() {
+    fun confirmUpdateUserAttribute(call: MethodCall, result: Result) {
         val attributeName = call.argument<String>("attributeName")!!
         val confirmationCode = call.argument<String>("confirmationCode")!!
 

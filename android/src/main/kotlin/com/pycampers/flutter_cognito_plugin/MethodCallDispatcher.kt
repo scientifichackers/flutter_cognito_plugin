@@ -17,13 +17,9 @@ class DoAsync(val fn: () -> Unit) : AsyncTask<Void, Void, Void>() {
 }
 
 open class MethodCallDispatcher : MethodCallHandler {
-    lateinit var call: MethodCall
-    lateinit var result: Result
     var initialized = false
 
     override fun onMethodCall(call: MethodCall, result: Result) {
-        this.call = call
-        this.result = result
         val methodName = call.method
 
         if (!initialized && methodName != "initialize") {
@@ -35,7 +31,7 @@ open class MethodCallDispatcher : MethodCallHandler {
         }
 
         val method = try {
-            javaClass.getMethod(methodName)
+            javaClass.getMethod(methodName, MethodCall::class.java, Result::class.java)
         } catch (e: java.lang.Exception) {
             when (e) {
                 is NoSuchMethodException, is SecurityException -> null
@@ -46,7 +42,7 @@ open class MethodCallDispatcher : MethodCallHandler {
         if (method == null) {
             result.notImplemented()
         } else {
-            DoAsync { method.invoke(this) }
+            DoAsync { method.invoke(this, call, result) }
         }
     }
 }
