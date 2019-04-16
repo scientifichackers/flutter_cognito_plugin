@@ -4,10 +4,7 @@ import android.content.Context
 import com.amazonaws.mobile.client.AWSMobileClient
 import com.amazonaws.mobile.client.Callback
 import com.amazonaws.mobile.client.UserStateDetails
-import com.amazonaws.mobile.client.results.ForgotPasswordResult
-import com.amazonaws.mobile.client.results.SignInResult
-import com.amazonaws.mobile.client.results.SignUpResult
-import com.amazonaws.mobile.client.results.UserCodeDeliveryDetails
+import com.amazonaws.mobile.client.results.*
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.Result
@@ -136,6 +133,13 @@ class Cognito(val context: Context, val methodChannel: MethodChannel) : MethodCa
             return dumpException(e, result)
         }
         result.success(value)
+    }
+
+    fun getTokens(call: MethodCall, result: Result) {
+        awsClient.getTokens(object : Callback<Tokens> {
+            override fun onResult(f: Tokens) = result.success(dumpTokensResult(f))
+            override fun onError(e: Exception) = dumpException(e, result)
+        })
     }
 
     fun currentUserState(call: MethodCall, result: Result) {

@@ -207,6 +207,10 @@ class Cognito {
     return await invokeMethod("getIdentityId");
   }
 
+  static Future<Tokens> getTokens() async {
+    return Tokens.fromMsg(await invokeMethod("getTokens"));
+  }
+
   static Future<Map<String, String>> getUserAttributes() async {
     return Map<String, String>.from(await invokeMethod("getUserAttributes"));
   }

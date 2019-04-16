@@ -389,6 +389,14 @@ func dumpForgotPasswordResult(_ forgotPasswordResult: ForgotPasswordResult) -> [
     )
 }
 
+func dumpTokensResult(_ tokensResult: Tokens) -> [Any] {
+    return [
+        tokensResult.accessToken?.tokenString ?? "null",
+        tokensResult.idToken?.tokenString ?? "null",
+        tokensResult.refreshToken?.tokenString ?? "null"
+    ]
+}
+
 let _androidUserStateEnum = [
     UserState.signedIn,
     UserState.guest,

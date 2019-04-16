@@ -2,10 +2,7 @@ package com.pycampers.flutter_cognito_plugin
 
 import com.amazonaws.AmazonServiceException
 import com.amazonaws.mobile.client.UserStateDetails
-import com.amazonaws.mobile.client.results.ForgotPasswordResult
-import com.amazonaws.mobile.client.results.SignInResult
-import com.amazonaws.mobile.client.results.SignUpResult
-import com.amazonaws.mobile.client.results.UserCodeDeliveryDetails
+import com.amazonaws.mobile.client.results.*
 import io.flutter.plugin.common.MethodChannel
 
 fun dumpException(e: Exception, result: MethodChannel.Result) {
@@ -53,4 +50,12 @@ fun dumpForgotPasswordResult(forgotPasswordResult: ForgotPasswordResult): List<*
 
 fun dumpUserState(userStateDetails: UserStateDetails): Int {
     return userStateDetails.userState.ordinal
+}
+
+fun dumpTokensResult(tokensResult: Tokens): List<*> {
+    return listOf(
+            tokensResult.accessToken,
+            tokensResult.idToken,
+            tokensResult.refreshToken
+    )
 }

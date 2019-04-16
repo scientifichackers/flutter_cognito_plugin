@@ -141,3 +141,21 @@ class ForgotPasswordResult {
     parameters = UserCodeDeliveryDetails.fromMsg(msg.sublist(1));
   }
 }
+
+/// The result of a get tokens action
+class Tokens {
+  /// may be null
+  final String accessToken;
+
+  /// may be null
+  final String idToken;
+
+  /// may be null
+  final String refreshToken;
+
+  Tokens(this.accessToken, this.idToken, this.refreshToken);
+
+  factory Tokens.fromMsg(List msg) {
+    return Tokens(msg[0], msg[1], msg[2]);
+  }
+}

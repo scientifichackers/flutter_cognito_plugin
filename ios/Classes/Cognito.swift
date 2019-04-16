@@ -116,6 +116,12 @@ class Cognito: MethodCallDispatcher {
     @objc func getIdentityId() {
         self.result!(awsClient.identityId)
     }
+    
+    @objc func getTokens() {
+        awsClient.getTokens { (tokens, error) in
+            self.awsCallback(tokens, error, dumpTokensResult)
+        }
+    }
 
     @objc func currentUserState() {
         self.result!(awsClient.currentUserState)
