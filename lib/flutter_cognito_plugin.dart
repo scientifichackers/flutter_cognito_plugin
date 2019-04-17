@@ -57,14 +57,12 @@ class Cognito {
       try {
         return await platform.invokeMethod(method, arguments);
       } catch (_e) {
-        if (!(_e is PlatformException)) {
-          rethrow;
-        }
+        if (_e is! PlatformException) rethrow;
 
         var e = tryConvertException(_e);
-        if (autoRetryLimit != null && tries > autoRetryLimit) {
-          throw e;
-        }
+
+        if (_e is! CognitoException ||
+            (autoRetryLimit != null && tries > autoRetryLimit)) throw e;
 
         if (_isRetryException(e)) {
           print("[Cognito] Ignoring exception - $e");
