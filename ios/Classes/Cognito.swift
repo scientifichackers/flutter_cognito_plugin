@@ -4,162 +4,154 @@ import Flutter
 class Cognito: MethodCallDispatcher {
     let awsClient = AWSMobileClient.sharedInstance()
 
-    func awsCallback<T>(_ obj: T?, _ error: Error?, _ dumpObj: (T) -> Any) {
-        if let obj = obj {
-            self.result!(dumpObj(obj))
-        } else if let error = error {
-            self.result!(dumpError(error))
-        } else {
-            self.result!(nil)
+    @objc func initialize(_ method: FlutterMethod) {
+        print(Thread
+        .isMainThread)
+        awsClient.initialize { userState, error in
+            awsCallback(userState, error, method.result, dumpUserState)
         }
     }
 
-    @objc func initialize() {
-        awsClient.initialize { (userState, error) in
-            self.awsCallback(userState, error, dumpUserState)
-        }
-    }
-
-    @objc func signUp() {
-        let username = self.args!["username"] as! String
-        let password = self.args!["password"] as! String
-        let attrs = self.args!["userAttributes"] as! [String: String]
+    @objc func signUp(_ method: FlutterMethod) {
+        let username = method.args["username"] as! String
+        let password = method.args["password"] as! String
+        let attrs = method.args["userAttributes"] as! [String: String]
 
         awsClient.signUp(
-                username: username,
-                password: password,
-                userAttributes: attrs,
-                validationData: [:]
-        ) { (result, error) in
-            self.awsCallback(result, error, dumpSignUpResult)
+            username: username,
+            password: password,
+            userAttributes: attrs,
+            validationData: [:]
+        ) { result, error in
+            awsCallback(result, error, method.result, dumpSignUpResult)
         }
     }
 
-    @objc func confirmSignUp() {
-        let username = self.args!["username"] as! String
-        let confirmationCode = self.args!["confirmationCode"] as! String
+    @objc func confirmSignUp(_ method: FlutterMethod) {
+        let username = method.args["username"] as! String
+        let confirmationCode = method.args["confirmationCode"] as! String
 
         awsClient.confirmSignUp(
-                username: username,
-                confirmationCode: confirmationCode
-        ) { (result, error) in
-            self.awsCallback(result, error, dumpSignUpResult)
+            username: username,
+            confirmationCode: confirmationCode
+        ) { result, error in
+            awsCallback(result, error, method.result, dumpSignUpResult)
         }
     }
 
-    @objc func resendSignUp() {
-        let username = self.args!["username"] as! String
+    @objc func resendSignUp(_ method: FlutterMethod) {
+        let username = method.args["username"] as! String
 
         awsClient.resendSignUpCode(
-                username: username
-        ) { (result, error) in
-            self.awsCallback(result, error, dumpSignUpResult)
+            username: username
+        ) { result, error in
+            awsCallback(result, error, method.result, dumpSignUpResult)
         }
     }
 
-    @objc func signIn() {
-        let username = self.args!["username"] as! String
-        let password = self.args!["password"] as! String
+    @objc func signIn(_ method: FlutterMethod) {
+        let username = method.args["username"] as! String
+        let password = method.args["password"] as! String
 
         awsClient.signIn(
-                username: username, password: password
-        ) { (result, error) in
-            self.awsCallback(result, error, dumpSignInResult)
+            username: username, password: password
+        ) { result, error in
+            awsCallback(result, error, method.result, dumpSignInResult)
         }
     }
 
-    @objc func confirmSignIn() {
-        let confirmationCode = self.args!["confirmationCode"] as! String
+    @objc func confirmSignIn(_ method: FlutterMethod) {
+        let confirmationCode = method.args["confirmationCode"] as! String
 
         awsClient.confirmSignIn(
-                challengeResponse: confirmationCode
-        ) { (result, error) in
-            self.awsCallback(result, error, dumpSignInResult)
+            challengeResponse: confirmationCode
+        ) { result, error in
+            awsCallback(result, error, method.result, dumpSignInResult)
         }
     }
 
-    @objc func forgotPassword() {
-        let username = self.args!["username"] as! String
+    @objc func forgotPassword(_ method: FlutterMethod) {
+        let username = method.args["username"] as! String
 
-        awsClient.forgotPassword(username: username) { (result, error) in
-            self.awsCallback(result, error, dumpForgotPasswordResult)
+        awsClient.forgotPassword(username: username) { result, error in
+            awsCallback(result, error, method.result, dumpForgotPasswordResult)
         }
     }
 
-    @objc func confirmForgotPassword() {
-        let username = self.args!["username"] as! String
-        let newPassword = self.args!["newPassword"] as! String
-        let confirmationCode = self.args!["confirmationCode"] as! String
+    @objc func confirmForgotPassword(_ method: FlutterMethod) {
+        let username = method.args["username"] as! String
+        let newPassword = method.args["newPassword"] as! String
+        let confirmationCode = method.args["confirmationCode"] as! String
 
         awsClient.confirmForgotPassword(
-                username: username,
-                newPassword: newPassword,
-                confirmationCode: confirmationCode
-        ) { (result, error) in
-            self.awsCallback(result, error, dumpForgotPasswordResult)
+            username: username,
+            newPassword: newPassword,
+            confirmationCode: confirmationCode
+        ) { result, error in
+            awsCallback(result, error, method.result, dumpForgotPasswordResult)
         }
     }
 
-    @objc func signOut() {
+    @objc func signOut(_ method: FlutterMethod) {
         awsClient.signOut()
-        self.result!(nil)
+        method.result(nil)
     }
 
-    @objc func getUsername() {
-        self.result!(awsClient.username)
+    @objc func getUsername(_ method: FlutterMethod) {
+        method.result(awsClient.username)
     }
 
-    @objc func isSignedIn() {
-        self.result!(awsClient.isSignedIn)
+    @objc func isSignedIn(_ method: FlutterMethod) {
+        method.result(awsClient.isSignedIn)
     }
 
-    @objc func getIdentityId() {
-        self.result!(awsClient.identityId)
+    @objc func getIdentityId(_ method: FlutterMethod) {
+        method.result(awsClient.identityId)
     }
-    
-    @objc func getTokens() {
-        awsClient.getTokens { (tokens, error) in
-            self.awsCallback(tokens, error, dumpTokensResult)
+
+    @objc func getTokens(_ method: FlutterMethod) {
+        awsClient.getTokens { tokens, error in
+            awsCallback(tokens, error, method.result, dumpTokensResult)
         }
     }
 
-    @objc func currentUserState() {
-        self.result!(awsClient.currentUserState)
+    @objc func currentUserState(_ method: FlutterMethod) {
+        method.result(awsClient.currentUserState)
     }
 
-    @objc func getUserAttributes() {
-        awsClient.getUserAttributes { (result, error) in
-            self.awsCallback(result, error, { (attrs) -> Any in
-                return attrs
-            })
+    @objc func getUserAttributes(_ method: FlutterMethod) {
+        awsClient.getUserAttributes { result, error in
+            awsCallback(result, error, method.result) { (attrs) -> Any in
+                attrs
+            }
         }
     }
 
-    @objc func updateUserAttributes() {
-        let userAttributes = self.args!["userAttributes"] as! [String: String]
+    @objc func updateUserAttributes(_ method: FlutterMethod) {
+        let userAttributes = method.args["userAttributes"] as! [String: String]
 
         awsClient.updateUserAttributes(
-                attributeMap: userAttributes
-        ) { (result, error) in
-            self.awsCallback(result, error, { (u) -> Any in
-                return u.map({ (it) -> Any in
+            attributeMap: userAttributes
+        ) { result, error in
+            awsCallback(result, error, method.result) { (u) -> Any in
+                u.map { (it) -> Any in
                     dumpUserCodeDeliveryDetails(it)
-                })
-            })
+                }
+            }
         }
     }
 
-    @objc func confirmUpdateUserAttribute() {
-        let attributeName = self.args!["attributeName"] as! String
-        let confirmationCode = self.args!["confirmationCode"] as! String
+    @objc func confirmUpdateUserAttribute(_ method: FlutterMethod) {
+        let attributeName = method.args["attributeName"] as! String
+        let confirmationCode = method.args["confirmationCode"] as! String
 
         awsClient.confirmUpdateUserAttributes(
-                attributeName: attributeName, code: confirmationCode
-        ) { (error) in
+            attributeName: attributeName, code: confirmationCode
+        ) { error in
             if let error = error {
-                self.result!(dumpError(error))
+                method.result(dumpError(error))
             } else {
-                self.result!(nil)
+                method.result(nil)
             }
         }
     }

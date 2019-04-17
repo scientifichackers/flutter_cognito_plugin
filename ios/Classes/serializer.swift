@@ -1,6 +1,15 @@
 import AWSMobileClient
 import Flutter
 
+func awsCallback<T>(_ obj: T?, _ error: Error?, _ result: FlutterResult, _ dumpObj: (T) -> Any) {
+    if let obj = obj {
+        result(dumpObj(obj))
+    } else if let error = error {
+        result(dumpError(error))
+    } else {
+        result(nil)
+    }
+}
 
 // Here's some Python code to generate error handling code :-)
 //
