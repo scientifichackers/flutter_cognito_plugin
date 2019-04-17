@@ -61,7 +61,7 @@ class Cognito {
           rethrow;
         }
 
-        var e = convertException(_e);
+        var e = tryConvertException(_e);
         if (autoRetryLimit != null && tries > autoRetryLimit) {
           throw e;
         }

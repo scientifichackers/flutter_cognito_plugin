@@ -188,3 +188,7 @@ class AmazonClientException extends CognitoException {
 class ApolloException extends CognitoException {
   ApolloException(String message) : super(message);
 }
+
+class RuntimeException extends CognitoException {
+  RuntimeException(String message) : super(message);
+}

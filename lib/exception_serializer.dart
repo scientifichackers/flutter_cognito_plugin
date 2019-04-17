@@ -72,6 +72,7 @@ var androidErrorMap = {
   "ApolloException": (m) => ApolloException(m),
   "com.amazonaws.AmazonClientException": (m) => AmazonClientException(m),
   "java.lang.IllegalStateException": (m) => InvalidStateException(m),
+  "java.lang.RuntimeException": (m) => RuntimeException(m),
   //
   // below here, are generated
   //
@@ -125,12 +126,12 @@ var androidErrorMap = {
   "DeviceNotRememberedException": (m) => DeviceNotRememberedException(m),
 };
 
-Exception convertException(PlatformException _e) {
+Exception tryConvertException(PlatformException _e) {
   var e;
   if (Platform.isAndroid) {
-    e = androidErrorMap[_e.code](_e.message);
+    e = androidErrorMap[_e.code]?.call(_e.message);
   } else if (Platform.isIOS) {
-    e = iosErrorMap[_e.code](_e.message);
+    e = iosErrorMap[_e.code]?.call(_e.message);
   }
   return e ?? _e;
 }
