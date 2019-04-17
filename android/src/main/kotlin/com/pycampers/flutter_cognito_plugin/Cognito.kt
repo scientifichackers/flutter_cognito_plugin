@@ -99,63 +99,11 @@ class Cognito(val context: Context, val methodChannel: MethodChannel) : MethodCa
         })
     }
 
-    fun signOut(call: MethodCall, result: Result) {
-        try {
-            awsClient.signOut()
-        } catch (e: Exception) {
-            return dumpException(e, result)
-        }
-        result.success(null)
-    }
-
-    fun getUsername(call: MethodCall, result: Result) {
-        val value: String
-        try {
-            value = awsClient.username
-        } catch (e: Exception) {
-            return dumpException(e, result)
-        }
-        result.success(value)
-    }
-
-    fun isSignedIn(call: MethodCall, result: Result) {
-        val value: Boolean
-        try {
-            value = awsClient.isSignedIn
-        } catch (e: Exception) {
-            return dumpException(e, result)
-        }
-        result.success(value)
-    }
-
-    fun getIdentityId(call: MethodCall, result: Result) {
-        val value: String
-        try {
-            value = awsClient.identityId
-        } catch (e: Exception) {
-            return dumpException(e, result)
-        }
-        result.success(value)
-    }
-
-    fun currentUserState(call: MethodCall, result: Result) {
-        val value: UserStateDetails
-        try {
-            value = awsClient.currentUserState()
-        } catch (e: Exception) {
-            return dumpException(e, result)
-        }
-        result.success(dumpUserState(value))
-    }
-
     fun getUserAttributes(call: MethodCall, result: Result) {
-        val value: Map<String, String>
-        try {
-            value = awsClient.userAttributes
-        } catch (e: Exception) {
-            return dumpException(e, result)
-        }
-        result.success(value)
+        awsClient.getUserAttributes(object : Callback<Map<String, String>> {
+            override fun onResult(attrs: Map<String, String>?) = result.success(attrs)
+            override fun onError(e: Exception) = dumpException(e, result)
+        })
     }
 
     fun updateUserAttributes(call: MethodCall, result: Result) {
@@ -175,5 +123,54 @@ class Cognito(val context: Context, val methodChannel: MethodChannel) : MethodCa
             override fun onResult(u: Void) = result.success(u)
             override fun onError(e: Exception) = dumpException(e, result)
         })
+    }
+
+    fun signOut(call: MethodCall, result: Result) {
+        try {
+            awsClient.signOut()
+        } catch (e: Throwable) {
+            return dumpException(e, result)
+        }
+        result.success(null)
+    }
+
+    fun getUsername(call: MethodCall, result: Result) {
+        val value: String
+        try {
+            value = awsClient.username
+        } catch (e: Throwable) {
+            return dumpException(e, result)
+        }
+        result.success(value)
+    }
+
+    fun isSignedIn(call: MethodCall, result: Result) {
+        val value: Boolean
+        try {
+            value = awsClient.isSignedIn
+        } catch (e: Throwable) {
+            return dumpException(e, result)
+        }
+        result.success(value)
+    }
+
+    fun getIdentityId(call: MethodCall, result: Result) {
+        val value: String
+        try {
+            value = awsClient.identityId
+        } catch (e: Throwable) {
+            return dumpException(e, result)
+        }
+        result.success(value)
+    }
+
+    fun currentUserState(call: MethodCall, result: Result) {
+        val value: UserStateDetails
+        try {
+            value = awsClient.currentUserState()
+        } catch (e: Throwable) {
+            return dumpException(e, result)
+        }
+        result.success(dumpUserState(value))
     }
 }

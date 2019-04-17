@@ -96,8 +96,22 @@ class Cognito {
   ///   runApp(MyApp());
   /// }
   /// ```
+  ///
+  /// Returns the value of [Cognito.getCurrentUserState()].
   static Future<UserState> initialize() async {
-    return UserState.values[await invokeMethod("initialize")];
+    // don't trust the UserState returned by this
+    // https://github.com/aws-amplify/aws-sdk-android/issues/873
+    await invokeMethod("initialize");
+
+    var userState = await Cognito.getCurrentUserState();
+
+    if (userState == UserState.SIGNED_OUT_FEDERATED_TOKENS_INVALID ||
+        userState == UserState.SIGNED_OUT_USER_POOLS_TOKENS_INVALID) {
+      await Cognito.signOut();
+      return await Cognito.getCurrentUserState();
+    }
+
+    return await Cognito.getCurrentUserState();
   }
 
   /// Registers a callback that gets called every-time the UserState changes.

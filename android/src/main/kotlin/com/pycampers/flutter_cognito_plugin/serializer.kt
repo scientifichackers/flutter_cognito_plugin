@@ -8,12 +8,12 @@ import com.amazonaws.mobile.client.results.SignUpResult
 import com.amazonaws.mobile.client.results.UserCodeDeliveryDetails
 import io.flutter.plugin.common.MethodChannel
 
-fun dumpException(e: Exception, result: MethodChannel.Result) {
+fun dumpException(e: Throwable, result: MethodChannel.Result) {
     try {
         throw e
     } catch (e: AmazonServiceException) {
         result.error(e.errorCode, e.errorMessage, e.errorType.name)
-    } catch (e: Exception) {
+    } catch (e: Throwable) {
         result.error(e.javaClass.canonicalName, e.message, null)
     }
 }
