@@ -21,8 +21,8 @@ class Cognito(val context: Context, val methodChannel: MethodChannel) : MethodCa
                 awsClient.addUserStateListener {
                     methodChannel.invokeMethod("userStateCallback", dumpUserState(it))
                 }
-                result.success(dumpUserState(u))
                 initialized = true
+                result.success(dumpUserState(u))
             }
 
             override fun onError(e: Exception) {
