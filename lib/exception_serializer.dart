@@ -126,12 +126,12 @@ var androidErrorMap = {
   "DeviceNotRememberedException": (m) => DeviceNotRememberedException(m),
 };
 
-Exception tryConvertException(PlatformException _e) {
-  var e;
+CognitoException tryConvertException(PlatformException e) {
+  CognitoException ce;
   if (Platform.isAndroid) {
-    e = androidErrorMap[_e.code]?.call(_e.message);
+    ce = androidErrorMap[e.code]?.call(e.message);
   } else if (Platform.isIOS) {
-    e = iosErrorMap[_e.code]?.call(_e.message);
+    ce = iosErrorMap[e.code]?.call(e.message);
   }
-  return e ?? _e;
+  return ce;
 }

@@ -2,22 +2,25 @@ import 'package:flutter/services.dart';
 import 'package:flutter_cognito_plugin/exception_serializer.dart';
 import 'package:flutter_cognito_plugin/exceptions.dart';
 import 'package:flutter_cognito_plugin/models.dart';
+import 'package:logging/logging.dart';
 
 export 'package:flutter_cognito_plugin/exceptions.dart';
 export 'package:flutter_cognito_plugin/models.dart';
 
-const _platform = const MethodChannel('com.pycampers.flutter_cognito_plugin');
+const _NAME = "flutter_cognito_plugin",
+    _platform = const MethodChannel('com.pycampers.flutter_cognito_plugin');
+final _l = Logger(_NAME);
 
 typedef OnUserStateChange(UserState userState);
 
-var _retryExceptions = [
+final _retryExceptions = [
   ApolloException("Failed to parse http response"),
   ApolloException("Failed to execute http call"),
   AmazonClientException("Unable to execute HTTP request"),
 ];
 
-bool _isRetryException(CognitoException e) {
-  for (var rule in _retryExceptions) {
+bool _shouldRetry(CognitoException e) {
+  for (final rule in _retryExceptions) {
     if (e.runtimeType == rule.runtimeType &&
         e.message.toUpperCase().contains(rule.message.toUpperCase())) {
       return true;
@@ -58,21 +61,16 @@ class Cognito {
         return await platform.invokeMethod(method, arguments);
       } catch (_e) {
         if (_e is! PlatformException) rethrow;
+        final e = tryConvertException(_e);
+        if (e == null) rethrow;
 
-        var e = tryConvertException(_e);
+        if ((autoRetryLimit != null && tries > autoRetryLimit) ||
+            !_shouldRetry(e)) throw e;
 
-        if (_e is! CognitoException ||
-            (autoRetryLimit != null && tries > autoRetryLimit)) throw e;
-
-        if (_isRetryException(e)) {
-          print("[Cognito] Ignoring exception - $e");
-          print(
-            "[Cognito] Will retry after $retryDelay (tries: $tries, limit: $autoRetryLimit)",
-          );
-          await Future.delayed(retryDelay);
-        } else {
-          throw e;
-        }
+        _l.info(
+          "caught exception { $e, retryDelay: $retryDelay, tries: $tries, limit: $autoRetryLimit }",
+        );
+        await Future.delayed(retryDelay);
       }
     }
   }
