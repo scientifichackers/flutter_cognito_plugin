@@ -1,5 +1,3 @@
-import 'package:flutter/services.dart';
-
 class CognitoException implements Exception {
   String message;
 
