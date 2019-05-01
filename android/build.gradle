@@ -42,8 +42,8 @@ android {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
-    implementation 'com.amazonaws:aws-android-sdk-core:2.12.+'
+    implementation 'com.amazonaws:aws-android-sdk-core:2.13.+'
 
-    implementation('com.amazonaws:aws-android-sdk-mobile-client:2.11.+@aar') { transitive = true }
-    implementation('com.amazonaws:aws-android-sdk-auth-userpools:2.11.+@aar') { transitive = true }
+    implementation('com.amazonaws:aws-android-sdk-mobile-client:2.13.+@aar') { transitive = true }
+    implementation('com.amazonaws:aws-android-sdk-auth-userpools:2.13.+@aar') { transitive = true }
 }
