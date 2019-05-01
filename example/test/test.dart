@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_cognito_plugin_example/main.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -26,23 +29,31 @@ class CognitoTest {
     return confirmationCode;
   }
 
-  Future<void> tapOnWidget(String text) async {
-    testWidgets(description, callback)
-    await find.text(text) 
+  Future<void> pressBtnWithKey(GlobalKey key) async {
+    await (key.currentWidget as RaisedButton).onPressed();
+    await waitForProgress();
   }
 
   Future<void> run() async {
     await waitForProgress();
-    if (state.returnValue == UserState.SIGNED_IN) {
+    if (state.userState == UserState.SIGNED_IN) {
       await Cognito.signOut();
     }
 
-    state.confirmSignupKey.currentState.
-    print(result);
+    state.usernameController.text = "+918764022384";
+    state.passwordController.text = "meghshala";
+
+    await pressBtnWithKey(state.signInKey);
 
     print("Enter confirmation code!");
     final code = await waitForConfirmationCode();
     print("Got confirmation code: $code");
+
+
+    await pressBtnWithKey(state.confirmSignInKey);
+
+
+    print(find.text('getUsername').evaluate().first.widget);
   }
 }
 
@@ -51,6 +62,6 @@ void main() {
     final appKey = GlobalKey<MyAppState>();
     final app = MyApp(key: appKey);
     runApp(app);
-    CognitoTest(appKey).run();
+    await CognitoTest(appKey).run();
   });
 }
