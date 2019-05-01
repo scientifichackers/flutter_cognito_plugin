@@ -15,7 +15,7 @@ class MyApp extends StatefulWidget {
 }
 
 class MyAppState extends State<MyApp> {
-  var returnAValue;
+  var returnValue;
   UserState userState;
   double progress;
   final usernameController = TextEditingController();
@@ -44,7 +44,7 @@ class MyAppState extends State<MyApp> {
     if (!mounted) return;
     setState(() {
       progress = -1;
-      returnValue = userState = value;
+      userState = value;
     });
   }
 
