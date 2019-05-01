@@ -93,9 +93,7 @@ class _MyAppState extends State<MyApp> {
       [
         TextField(
           decoration: InputDecoration(labelText: 'username'),
-          onChanged: (value) {
-            setState(() => _username = value);
-          },
+          controller: usernameController,
         ),
         TextField(
           decoration: InputDecoration(labelText: 'password'),
@@ -134,6 +132,7 @@ class _MyAppState extends State<MyApp> {
       RaisedButton(
         child: Text("signUp(username, password)"),
         onPressed: onPressWrapper(() {
+          final attrs = attrsController.text;
           return Cognito.signUp(
             _username,
             _password,

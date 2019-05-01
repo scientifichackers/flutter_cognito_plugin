@@ -1,22 +1,10 @@
 package com.pycampers.flutter_cognito_plugin
 
-import com.amazonaws.AmazonServiceException
 import com.amazonaws.mobile.client.UserStateDetails
 import com.amazonaws.mobile.client.results.ForgotPasswordResult
 import com.amazonaws.mobile.client.results.SignInResult
 import com.amazonaws.mobile.client.results.SignUpResult
 import com.amazonaws.mobile.client.results.UserCodeDeliveryDetails
-import io.flutter.plugin.common.MethodChannel
-
-fun dumpException(e: Throwable, result: MethodChannel.Result) {
-    try {
-        throw e
-    } catch (e: AmazonServiceException) {
-        result.error(e.errorCode, e.errorMessage, e.errorType.name)
-    } catch (e: Throwable) {
-        result.error(e.javaClass.canonicalName, e.message, null)
-    }
-}
 
 fun dumpUserCodeDeliveryDetails(u: UserCodeDeliveryDetails?): List<String> {
     return if (u != null) {

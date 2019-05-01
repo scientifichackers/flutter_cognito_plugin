@@ -1,4 +1,3 @@
-
 /// Indicates who is responsible (if known) for a failed request.
 ///
 /// For example, if a client is using an invalid AWS access key, the returned
@@ -63,81 +62,92 @@ enum ForgotPasswordState { CONFIRMATION_CODE, DONE, UNKNOWN }
 
 /// Determines where the confirmation code was sent.
 class UserCodeDeliveryDetails {
-  String attributeName;
-  String destination;
-  String deliveryMedium;
+  final String attributeName, destination, deliveryMedium;
+
+  UserCodeDeliveryDetails._internal(List msg)
+      : attributeName = msg[0],
+        destination = msg[1],
+        deliveryMedium = msg[2];
+
+  factory UserCodeDeliveryDetails.fromMsg(List msg) {
+    if (msg.length < 3) return null;
+    return UserCodeDeliveryDetails._internal(msg);
+  }
 
   @override
   String toString() {
-    return "UserCodeDeliveryDetails("
-        "attributeName=$attributeName, "
-        "destination=$destination, "
-        "deliveryMedium=$deliveryMedium)";
-  }
-
-  UserCodeDeliveryDetails.fromMsg(List msg) {
-    if (msg.length != 3) return;
-    attributeName = msg[0];
-    destination = msg[1];
-    deliveryMedium = msg[2];
+    return "UserCodeDeliveryDetails { attributeName: $attributeName, "
+        "destination: $destination, deliveryMedium: $deliveryMedium }";
   }
 }
 
 /// The result from signing-in. Check the state to determine the next step.
 class SignInResult {
-  SignInState signInState;
+  final SignInState signInState;
 
   /// Used to determine the type of challenge that is being present from the service
-  Map<String, String> parameters;
-  UserCodeDeliveryDetails userCodeDeliveryDetails;
+  final Map<String, String> parameters;
+  final UserCodeDeliveryDetails userCodeDeliveryDetails;
 
   @override
   String toString() {
-    return "SignInResult("
-        "signInState=$signInState, "
-        "parameters=$parameters, "
-        "userCodeDeliveryDetails=$userCodeDeliveryDetails)";
+    return "SignInResult { signInState: $signInState, parameters: $parameters, "
+        "userCodeDeliveryDetails: $userCodeDeliveryDetails }";
   }
 
-  SignInResult.fromMsg(List msg) {
-    signInState = SignInState.values[msg[0]];
-    parameters = (msg[1] == null) ? null : Map<String, String>.from(msg[1]);
-    userCodeDeliveryDetails = UserCodeDeliveryDetails.fromMsg(msg.sublist(2));
-  }
+  SignInResult.fromMsg(List msg)
+      : signInState = SignInState.values[msg[0]],
+        parameters = (msg[1] == null) ? null : Map<String, String>.from(msg[1]),
+        userCodeDeliveryDetails =
+            UserCodeDeliveryDetails.fromMsg(msg.sublist(2));
 }
 
 /// The result of a sign up action. Check the confirmation state and delivery details to proceed.
 class SignUpResult {
   /// - [true] -> user is confirmed, no further action is necessary.
   /// - [false] -> check delivery details and call [confirmSignUp()].
-  bool confirmationState;
-  UserCodeDeliveryDetails userCodeDeliveryDetails;
+  final bool confirmationState;
+  final UserCodeDeliveryDetails userCodeDeliveryDetails;
 
   @override
   String toString() {
-    return "SignUpResult("
-        "confirmationState=$confirmationState, "
-        "userCodeDeliveryDetails=$userCodeDeliveryDetails)";
+    return "SignUpResult { confirmationState: $confirmationState, "
+        "userCodeDeliveryDetails: $userCodeDeliveryDetails }";
   }
 
-  SignUpResult.fromMsg(List msg) {
-    confirmationState = msg[0];
-    userCodeDeliveryDetails = UserCodeDeliveryDetails.fromMsg(msg.sublist(1));
-  }
+  SignUpResult.fromMsg(List msg)
+      : confirmationState = msg[0],
+        userCodeDeliveryDetails =
+            UserCodeDeliveryDetails.fromMsg(msg.sublist(1));
 }
 
 /// The result of a forgot password action
 class ForgotPasswordResult {
-  ForgotPasswordState state;
-  UserCodeDeliveryDetails parameters;
+  final ForgotPasswordState state;
+  final UserCodeDeliveryDetails parameters;
 
   @override
   String toString() {
-    return "ForgotPasswordResult(state=$state, parameters=$parameters)";
+    return "ForgotPasswordResult { state: $state, parameters: $parameters }";
   }
 
-  ForgotPasswordResult.fromMsg(List msg) {
-    state = ForgotPasswordState.values[msg[0]];
-    parameters = UserCodeDeliveryDetails.fromMsg(msg.sublist(1));
+  ForgotPasswordResult.fromMsg(List msg)
+      : state = ForgotPasswordState.values[msg[0]],
+        parameters = UserCodeDeliveryDetails.fromMsg(msg.sublist(1));
+}
+
+/// A container for different types of [Token]s.
+class Tokens {
+  final String accessToken, idToken, refreshToken;
+
+  Tokens.fromMsg(List msg)
+      : accessToken = msg[0],
+        idToken = msg[1],
+        refreshToken = msg[2];
+
+  @override
+  String toString() {
+    return "Tokens { acessToken: $accessToken, "
+        "idToken: $idToken, refreshToken: $refreshToken }";
   }
 }
