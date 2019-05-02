@@ -1,42 +1,62 @@
 import 'dart:convert';
 
-import 'package:flutter_cognito_plugin/flutter_cognito_plugin.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cognito_plugin/flutter_cognito_plugin.dart';
 
-void main() async {
-  var details = await Cognito.initialize();
-  runApp(MyApp(details));
+void main() {
+  runApp(MyApp());
 }
 
 class MyApp extends StatefulWidget {
-  final UserState userState;
-
-  MyApp(this.userState);
+  const MyApp({Key key}) : super(key: key);
 
   @override
-  _MyAppState createState() => _MyAppState();
+  MyAppState createState() => MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
-  String _userState,
-      _returnValue,
-      _username,
-      _password,
-      _attrs,
-      _newPassword,
-      _confirmationCode;
-  double _progress = -1;
+class MyAppState extends State<MyApp> {
+  var returnValue;
+  UserState userState;
+  double progress;
+  final usernameController = TextEditingController();
+  final passwordController = TextEditingController();
+  final attrsController = TextEditingController();
+  final newPasswordController = TextEditingController();
+  final confirmationCodeController = TextEditingController();
+
+  Future<void> doLoad() async {
+    var value;
+    try {
+      value = await Cognito.initialize();
+    } catch (e, trace) {
+      print(e);
+      print(trace);
+
+      if (!mounted) return;
+      setState(() {
+        returnValue = e;
+        progress = -1;
+      });
+
+      return;
+    }
+
+    if (!mounted) return;
+    setState(() {
+      progress = -1;
+      userState = value;
+    });
+  }
 
   @override
   void initState() {
-    _userState = widget.userState.toString();
     super.initState();
-    Cognito.registerCallback((details) {
-      if (mounted) {
-        setState(() {
-          _userState = details.toString();
-        });
-      }
+    doLoad();
+    Cognito.registerCallback((value) {
+      if (!mounted) return;
+      setState(() {
+        userState = value;
+      });
     });
   }
 
@@ -46,17 +66,17 @@ class _MyAppState extends State<MyApp> {
     super.dispose();
   }
 
-  returnValue() {
+  List<Widget> buildReturnValue() {
     return [
       Text(
-        _userState ?? "UserState will appear here",
+        userState?.toString() ?? "UserState will appear here",
         style: TextStyle(fontStyle: FontStyle.italic),
       ),
       Divider(
         color: Colors.black,
       ),
       Text(
-        _returnValue ?? "return values will appear here.",
+        returnValue?.toString() ?? "return values will appear here.",
         style: TextStyle(fontStyle: FontStyle.italic),
       )
     ];
@@ -66,7 +86,7 @@ class _MyAppState extends State<MyApp> {
   onPressWrapper(fn) {
     wrapper() async {
       setState(() {
-        _progress = null;
+        progress = null;
       });
 
       String value;
@@ -78,11 +98,11 @@ class _MyAppState extends State<MyApp> {
         setState(() => value = e.toString());
       } finally {
         setState(() {
-          _progress = -1;
+          progress = -1;
         });
       }
 
-      setState(() => _returnValue = value.toString());
+      setState(() => returnValue = value);
     }
 
     return wrapper;
@@ -93,37 +113,27 @@ class _MyAppState extends State<MyApp> {
       [
         TextField(
           decoration: InputDecoration(labelText: 'username'),
-          onChanged: (value) {
-            setState(() => _username = value);
-          },
+          controller: usernameController,
         ),
         TextField(
           decoration: InputDecoration(labelText: 'password'),
-          onChanged: (value) {
-            setState(() => _password = value);
-          },
+          controller: passwordController,
         ),
         TextField(
           decoration: InputDecoration(labelText: 'userAttributes'),
-          onChanged: (value) {
-            setState(() => _attrs = value);
-          },
+          controller: attrsController,
         )
       ],
       [
         TextField(
           decoration: InputDecoration(labelText: 'confirmationCode'),
-          onChanged: (value) {
-            setState(() => _confirmationCode = value);
-          },
+          controller: confirmationCodeController,
         ),
       ],
       [
         TextField(
           decoration: InputDecoration(labelText: 'newPassword'),
-          onChanged: (value) {
-            setState(() => _newPassword = value);
-          },
+          controller: newPasswordController,
         ),
       ],
     ];
@@ -134,25 +144,27 @@ class _MyAppState extends State<MyApp> {
       RaisedButton(
         child: Text("signUp(username, password)"),
         onPressed: onPressWrapper(() {
+          final attrs = attrsController.text;
           return Cognito.signUp(
-            _username,
-            _password,
-            (_attrs?.isEmpty ?? true)
-                ? null
-                : Map<String, String>.from(jsonDecode(_attrs)),
+            usernameController.text,
+            passwordController.text,
+            attrs.isEmpty ? null : Map<String, String>.from(jsonDecode(attrs)),
           );
         }),
       ),
       RaisedButton(
         child: Text("confirmSignUp(username, confirmationCode)"),
         onPressed: onPressWrapper(() {
-          return Cognito.confirmSignUp(_username, _confirmationCode);
+          return Cognito.confirmSignUp(
+            usernameController.text,
+            confirmationCodeController.text,
+          );
         }),
       ),
       RaisedButton(
         child: Text("resendSignUp(username)"),
         onPressed: onPressWrapper(() {
-          return Cognito.resendSignUp(_username);
+          return Cognito.resendSignUp(usernameController.text);
         }),
       )
     ];
@@ -163,13 +175,16 @@ class _MyAppState extends State<MyApp> {
       RaisedButton(
         child: Text("signIn(username, password)"),
         onPressed: onPressWrapper(() {
-          return Cognito.signIn(_username, _password);
+          return Cognito.signIn(
+            usernameController.text,
+            passwordController.text,
+          );
         }),
       ),
       RaisedButton(
         child: Text("confirmSignIn(confirmationCode)"),
         onPressed: onPressWrapper(() {
-          return Cognito.confirmSignIn(_confirmationCode);
+          return Cognito.confirmSignIn(confirmationCodeController.text);
         }),
       ),
       RaisedButton(
@@ -186,7 +201,7 @@ class _MyAppState extends State<MyApp> {
       RaisedButton(
         child: Text("forgotPassword(username)"),
         onPressed: onPressWrapper(() {
-          return Cognito.forgotPassword(_username);
+          return Cognito.forgotPassword(usernameController.text);
         }),
       ),
       RaisedButton(
@@ -195,9 +210,9 @@ class _MyAppState extends State<MyApp> {
         ),
         onPressed: onPressWrapper(() {
           return Cognito.confirmForgotPassword(
-            _username,
-            _newPassword,
-            _confirmationCode,
+            usernameController.text,
+            newPasswordController.text,
+            confirmationCodeController.text,
           );
         }),
       )
@@ -224,6 +239,12 @@ class _MyAppState extends State<MyApp> {
           return Cognito.getIdentityId();
         }),
       ),
+      RaisedButton(
+        child: Text("getTokens()"),
+        onPressed: onPressWrapper(() {
+          return Cognito.getTokens();
+        }),
+      ),
     ];
   }
 
@@ -236,7 +257,7 @@ class _MyAppState extends State<MyApp> {
           children: <Widget>[
             Center(
               child: buildChildren(
-                <List<Widget>>[returnValue()] +
+                <List<Widget>>[buildReturnValue()] +
                     textFields() +
                     <List<Widget>>[
                       signUp(),
@@ -246,12 +267,12 @@ class _MyAppState extends State<MyApp> {
                     ],
               ),
             ),
-            (_progress == null || _progress > 0)
+            (progress == null || progress > 0)
                 ? Column(
-              children: <Widget>[
-                LinearProgressIndicator(value: _progress),
-              ],
-            )
+                    children: <Widget>[
+                      LinearProgressIndicator(value: progress),
+                    ],
+                  )
                 : Container(),
           ],
         ),

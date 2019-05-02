@@ -228,7 +228,9 @@ class Cognito {
       "userAttributes": userAttributes ?? {},
     });
     return List<UserCodeDeliveryDetails>.from(
-      uL.map((u) => UserCodeDeliveryDetails.fromMsg(u)),
+      uL.map((u) {
+        return UserCodeDeliveryDetails.fromMsg(u);
+      }),
     );
   }
 
@@ -240,5 +242,11 @@ class Cognito {
       "attributeName": attributeName,
       "confirmationCode": confirmationCode,
     });
+  }
+
+  /// Returns the tokens obtained from Cognito User Pools sign-in.
+  ///  Federated sign-in tokens are not supported.
+  static Future<Tokens> getTokens() async {
+    return Tokens.fromMsg(await invokeMethod("getTokens"));
   }
 }
