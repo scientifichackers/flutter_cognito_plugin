@@ -16,26 +16,26 @@ fun dumpUserCodeDeliveryDetails(u: UserCodeDeliveryDetails?): List<String> {
 
 fun dumpSignUpResult(signUpResult: SignUpResult): List<*> {
     return listOf(
-            signUpResult.confirmationState
+        signUpResult.confirmationState
     ) + dumpUserCodeDeliveryDetails(
-            signUpResult.userCodeDeliveryDetails
+        signUpResult.userCodeDeliveryDetails
     )
 }
 
 fun dumpSignInResult(signInResult: SignInResult): List<*> {
     return listOf(
-            signInResult.signInState.ordinal,
-            signInResult.parameters
+        signInResult.signInState.ordinal,
+        signInResult.parameters
     ) + dumpUserCodeDeliveryDetails(
-            signInResult.codeDetails
+        signInResult.codeDetails
     )
 }
 
 fun dumpForgotPasswordResult(forgotPasswordResult: ForgotPasswordResult): List<*> {
     return listOf(
-            forgotPasswordResult.state.ordinal
+        forgotPasswordResult.state.ordinal
     ) + dumpUserCodeDeliveryDetails(
-            forgotPasswordResult.parameters
+        forgotPasswordResult.parameters
     )
 }
 
