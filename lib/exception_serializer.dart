@@ -3,79 +3,58 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:flutter_cognito_plugin/exceptions.dart';
 
-var iosErrorMap = {
-  "AWSMobileClientError.aliasExists": (m) => AliasExistsException(m),
-  "AWSMobileClientError.codeDeliveryFailure": (m) =>
-      CodeDeliveryFailureException(m),
-  "AWSMobileClientError.codeMismatch": (m) => CodeMismatchException(m),
-  "AWSMobileClientError.expiredCode": (m) => ExpiredCodeException(m),
-  "AWSMobileClientError.groupExists": (m) => GroupExistsException(m),
-  "AWSMobileClientError.internalError": (m) => InternalErrorException(m),
-  "AWSMobileClientError.invalidLambdaResponse": (m) =>
-      InvalidLambdaResponseException(m),
-  "AWSMobileClientError.invalidOAuthFlow": (m) => InvalidOAuthFlowException(m),
-  "AWSMobileClientError.invalidParameter": (m) => InvalidParameterException(m),
-  "AWSMobileClientError.invalidPassword": (m) => InvalidPasswordException(m),
-  "AWSMobileClientError.invalidUserPoolConfiguration": (m) =>
+typedef CognitoException _ExceptionBuilder(String msg);
+
+var _iosErrors = <String, _ExceptionBuilder>{
+  "aliasExists": (m) => AliasExistsException(m),
+  "codeDeliveryFailure": (m) => CodeDeliveryFailureException(m),
+  "codeMismatch": (m) => CodeMismatchException(m),
+  "expiredCode": (m) => ExpiredCodeException(m),
+  "groupExists": (m) => GroupExistsException(m),
+  "internalError": (m) => InternalErrorException(m),
+  "invalidLambdaResponse": (m) => InvalidLambdaResponseException(m),
+  "invalidOAuthFlow": (m) => InvalidOAuthFlowException(m),
+  "invalidParameter": (m) => InvalidParameterException(m),
+  "invalidPassword": (m) => InvalidPasswordException(m),
+  "invalidUserPoolConfiguration": (m) =>
       InvalidUserPoolConfigurationException(m),
-  "AWSMobileClientError.limitExceeded": (m) => LimitExceededException(m),
-  "AWSMobileClientError.mfaMethodNotFound": (m) =>
-      MfaMethodNotFoundException(m),
-  "AWSMobileClientError.notAuthorized": (m) => NotAuthorizedException(m),
-  "AWSMobileClientError.passwordResetRequired": (m) =>
-      PasswordResetRequiredException(m),
-  "AWSMobileClientError.resourceNotFound": (m) => ResourceNotFoundException(m),
-  "AWSMobileClientError.scopeDoesNotExist": (m) =>
-      ScopeDoesNotExistException(m),
-  "AWSMobileClientError.softwareTokenMFANotFound": (m) =>
-      SoftwareTokenMFANotFoundException(m),
-  "AWSMobileClientError.tooManyFailedAttempts": (m) =>
-      TooManyFailedAttemptsException(m),
-  "AWSMobileClientError.tooManyRequests": (m) => TooManyRequestsException(m),
-  "AWSMobileClientError.unexpectedLambda": (m) => UnexpectedLambdaException(m),
-  "AWSMobileClientError.userLambdaValidation": (m) =>
-      UserLambdaValidationException(m),
-  "AWSMobileClientError.userNotConfirmed": (m) => UserNotConfirmedException(m),
-  "AWSMobileClientError.userNotFound": (m) => UserNotFoundException(m),
-  "AWSMobileClientError.usernameExists": (m) => UsernameExistsException(m),
-  "AWSMobileClientError.unknown": (m) => UnknownException(m),
-  "AWSMobileClientError.notSignedIn": (m) => NotSignedInException(m),
-  "AWSMobileClientError.identityIdUnavailable": (m) =>
-      IdentityIdUnavailableException(m),
-  "AWSMobileClientError.guestAccessNotAllowed": (m) =>
-      GuestAccessNotAllowedException(m),
-  "AWSMobileClientError.federationProviderExists": (m) =>
-      FederationProviderExistsException(m),
-  "AWSMobileClientError.cognitoIdentityPoolNotConfigured": (m) =>
+  "limitExceeded": (m) => LimitExceededException(m),
+  "mfaMethodNotFound": (m) => MfaMethodNotFoundException(m),
+  "notAuthorized": (m) => NotAuthorizedException(m),
+  "passwordResetRequired": (m) => PasswordResetRequiredException(m),
+  "resourceNotFound": (m) => ResourceNotFoundException(m),
+  "scopeDoesNotExist": (m) => ScopeDoesNotExistException(m),
+  "softwareTokenMFANotFound": (m) => SoftwareTokenMFANotFoundException(m),
+  "tooManyFailedAttempts": (m) => TooManyFailedAttemptsException(m),
+  "tooManyRequests": (m) => TooManyRequestsException(m),
+  "unexpectedLambda": (m) => UnexpectedLambdaException(m),
+  "userLambdaValidation": (m) => UserLambdaValidationException(m),
+  "userNotConfirmed": (m) => UserNotConfirmedException(m),
+  "userNotFound": (m) => UserNotFoundException(m),
+  "usernameExists": (m) => UsernameExistsException(m),
+  "unknown": (m) => UnknownException(m),
+  "notSignedIn": (m) => NotSignedInException(m),
+  "identityIdUnavailable": (m) => IdentityIdUnavailableException(m),
+  "guestAccessNotAllowed": (m) => GuestAccessNotAllowedException(m),
+  "federationProviderExists": (m) => FederationProviderExistsException(m),
+  "cognitoIdentityPoolNotConfigured": (m) =>
       CognitoIdentityPoolNotConfiguredException(m),
-  "AWSMobileClientError.unableToSignIn": (m) => UnableToSignInException(m),
-  "AWSMobileClientError.invalidState": (m) => InvalidStateException(m),
-  "AWSMobileClientError.userPoolNotConfigured": (m) =>
-      UserPoolNotConfiguredException(m),
-  "AWSMobileClientError.userCancelledSignIn": (m) =>
-      UserCancelledSignInException(m),
-  "AWSMobileClientError.badRequest": (m) => BadRequestException(m),
-  "AWSMobileClientError.expiredRefreshToken": (m) =>
-      ExpiredRefreshTokenException(m),
-  "AWSMobileClientError.errorLoadingPage": (m) => ErrorLoadingPageException(m),
-  "AWSMobileClientError.securityFailed": (m) => SecurityFailedException(m),
-  "AWSMobileClientError.idTokenNotIssued": (m) => IdTokenNotIssuedException(m),
-  "AWSMobileClientError.idTokenAndAcceessTokenNotIssued": (m) =>
+  "unableToSignIn": (m) => UnableToSignInException(m),
+  "invalidState": (m) => InvalidStateException(m),
+  "userPoolNotConfigured": (m) => UserPoolNotConfiguredException(m),
+  "userCancelledSignIn": (m) => UserCancelledSignInException(m),
+  "badRequest": (m) => BadRequestException(m),
+  "expiredRefreshToken": (m) => ExpiredRefreshTokenException(m),
+  "errorLoadingPage": (m) => ErrorLoadingPageException(m),
+  "securityFailed": (m) => SecurityFailedException(m),
+  "idTokenNotIssued": (m) => IdTokenNotIssuedException(m),
+  "idTokenAndAcceessTokenNotIssued": (m) =>
       IdTokenAndAccessTokenNotIssuedException(m),
-  "AWSMobileClientError.invalidConfiguration": (m) =>
-      InvalidConfigurationException(m),
-  "AWSMobileClientError.deviceNotRemembered": (m) =>
-      DeviceNotRememberedException(m),
+  "invalidConfiguration": (m) => InvalidConfigurationException(m),
+  "deviceNotRemembered": (m) => DeviceNotRememberedException(m),
 };
 
-var androidErrorMap = {
-  "ApolloException": (m) => ApolloException(m),
-  "com.amazonaws.AmazonClientException": (m) => AmazonClientException(m),
-  "java.lang.IllegalStateException": (m) => InvalidStateException(m),
-  "java.lang.RuntimeException": (m) => RuntimeException(m),
-  //
-  // below here, are generated
-  //
+var _androidErrors = <String, _ExceptionBuilder>{
   "AliasExistsException": (m) => AliasExistsException(m),
   "CodeDeliveryFailureException": (m) => CodeDeliveryFailureException(m),
   "CodeMismatchException": (m) => CodeMismatchException(m),
@@ -126,12 +105,34 @@ var androidErrorMap = {
   "DeviceNotRememberedException": (m) => DeviceNotRememberedException(m),
 };
 
+const _iosErrorPrefix = 'AWSMobileClientError.';
+const _androidErrorPrefix =
+    'com.amazonaws.services.cognitoidentityprovider.model.';
+
+bool _initialized = false;
+
+void _initialize() {
+  _iosErrors = _iosErrors.map((k, v) {
+    return MapEntry(_iosErrorPrefix + k, v);
+  });
+  _androidErrors = _androidErrors.map((k, v) {
+    return MapEntry(_androidErrorPrefix + k, v);
+  });
+  _androidErrors.addAll({
+    "com.amazonaws.AmazonClientException": (m) => AmazonClientException(m),
+    "java.lang.IllegalStateException": (m) => InvalidStateException(m),
+    "java.lang.RuntimeException": (m) => RuntimeException(m),
+  });
+  _initialized = true;
+}
+
 CognitoException tryConvertException(PlatformException e) {
+  if (!_initialized) _initialize();
   CognitoException ce;
   if (Platform.isAndroid) {
-    ce = androidErrorMap[e.code]?.call(e.message);
+    ce = _androidErrors[e.code]?.call(e.message);
   } else if (Platform.isIOS) {
-    ce = iosErrorMap[e.code]?.call(e.message);
+    ce = _iosErrors[e.code]?.call(e.message);
   }
   return ce;
 }
