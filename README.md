@@ -20,37 +20,35 @@ Since this plugin uses the native AWS sdk, the installation is a little more inv
 
 Add an `awsconfiguration.json` file to `android/app/src/main/res/raw/awsconfiguration.json`.
 
-This is typically what one looks like -
+This is what one should look like :-
 
 ```json
 {
-  "Version": "1.0",
-  "CredentialsProvider": {
-    "CognitoIdentity": {
-      "Default": {
-        "PoolId": "REPLACE_ME",
-        "Region": "REPLACE_ME"
-      }
+    "IdentityManager": {
+        "Default": {}
+    },
+    "CredentialsProvider": {
+        "CognitoIdentity": {
+            "Default": {
+                "PoolId": "XX-XXXX-X:XXXXXXXX-XXXX-1234-abcd-1234567890ab",
+                "Region": "XX-XXXX-X"
+            }
+        }
+    },
+    "CognitoUserPool": {
+        "Default": {
+            "PoolId": "XX-XXXX-X_abcd1234",
+            "AppClientId": "XXXXXXXX",
+            "AppClientSecret": "XXXXXXXXX",
+            "Region": "XX-XXXX-X"
+        }
     }
-  },
-  "IdentityManager": {
-    "Default": {}
-  },
-  "CognitoUserPool": {
-    "Default": {
-      "AppClientSecret": "REPLACE_ME",
-      "AppClientId": "REPLACE_ME",
-      "PoolId": "REPLACE_ME",
-      "Region": "REPLACE_ME"
-    }
-  }
 }
 ```
 
-
 This plugin supports the amplify SDK for android and iOS,
 and the the amplify cli can be used to generate the `awsconfiguration.json` file.
-d
+
 Just do `$ amplify init` from the `android` & `ios` folder of your app.
 
 ### iOS
