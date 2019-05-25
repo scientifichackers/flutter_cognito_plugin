@@ -257,23 +257,22 @@ class MyAppState extends State<MyApp> {
           children: <Widget>[
             Center(
               child: buildChildren(
-                <List<Widget>>[buildReturnValue()] +
-                    textFields() +
-                    <List<Widget>>[
-                      signUp(),
-                      signIn(),
-                      forgotPassword(),
-                      utils(),
-                    ],
+                <List<Widget>>[
+                  buildReturnValue(),
+                  ...textFields(),
+                  signUp(),
+                  signIn(),
+                  forgotPassword(),
+                  utils(),
+                ],
               ),
             ),
-            (progress == null || progress > 0)
-                ? Column(
-                    children: <Widget>[
-                      LinearProgressIndicator(value: progress),
-                    ],
-                  )
-                : Container(),
+            if (progress == null || progress > 0)
+              Column(
+                children: <Widget>[
+                  LinearProgressIndicator(value: progress),
+                ],
+              ),
           ],
         ),
       ),

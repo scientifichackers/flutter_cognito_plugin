@@ -9,13 +9,12 @@ import com.amazonaws.mobile.client.results.SignInResult
 import com.amazonaws.mobile.client.results.SignUpResult
 import com.amazonaws.mobile.client.results.Tokens
 import com.amazonaws.mobile.client.results.UserCodeDeliveryDetails
-import com.pycampers.method_call_dispatcher.MethodCallDispatcher
-import com.pycampers.method_call_dispatcher.trySend
-import com.pycampers.method_call_dispatcher.trySendThrowable
+import com.pycampers.plugin_scaffold.trySend
+import com.pycampers.plugin_scaffold.trySendThrowable
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 
-class Cognito(val context: Context, val methodChannel: MethodChannel) : MethodCallDispatcher() {
+class Cognito(val context: Context) {
     val awsClient = AWSMobileClient.getInstance()!!
 
     fun initialize(call: MethodCall, result: MethodChannel.Result) {
@@ -28,9 +27,6 @@ class Cognito(val context: Context, val methodChannel: MethodChannel) : MethodCa
                 trySendThrowable(result, e)
             }
         })
-        awsClient.addUserStateListener { it ->
-            methodChannel.invokeMethod("userStateCallback", dumpUserState(it))
-        }
     }
 
     fun signUp(call: MethodCall, result: MethodChannel.Result) {

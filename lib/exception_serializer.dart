@@ -3,9 +3,7 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:flutter_cognito_plugin/exceptions.dart';
 
-typedef CognitoException _ExceptionBuilder(String msg);
-
-var _iosErrors = <String, _ExceptionBuilder>{
+final _iosErrors = {
   "aliasExists": (m) => AliasExistsException(m),
   "codeDeliveryFailure": (m) => CodeDeliveryFailureException(m),
   "codeMismatch": (m) => CodeMismatchException(m),
@@ -54,7 +52,7 @@ var _iosErrors = <String, _ExceptionBuilder>{
   "deviceNotRemembered": (m) => DeviceNotRememberedException(m),
 };
 
-var _androidErrors = <String, _ExceptionBuilder>{
+final _androidErrors = {
   "AliasExistsException": (m) => AliasExistsException(m),
   "CodeDeliveryFailureException": (m) => CodeDeliveryFailureException(m),
   "CodeMismatchException": (m) => CodeMismatchException(m),
@@ -109,25 +107,27 @@ const _iosErrorPrefix = 'AWSMobileClientError.';
 const _androidErrorPrefix =
     'com.amazonaws.services.cognitoidentityprovider.model.';
 
-bool _initialized = false;
+var _errorMap;
 
 void _initialize() {
-  _iosErrors = _iosErrors.map((k, v) {
-    return MapEntry(_iosErrorPrefix + k, v);
-  });
-  _androidErrors = _androidErrors.map((k, v) {
-    return MapEntry(_androidErrorPrefix + k, v);
-  });
-  _androidErrors.addAll({
-    "com.amazonaws.AmazonClientException": (m) => AmazonClientException(m),
-    "java.lang.IllegalStateException": (m) => InvalidStateException(m),
-    "java.lang.RuntimeException": (m) => RuntimeException(m),
-  });
-  _initialized = true;
+  if (Platform.isAndroid) {
+    _errorMap = _androidErrors.map((k, v) {
+      return MapEntry(_androidErrorPrefix + k, v);
+    });
+    _errorMap.addAll({
+      "com.amazonaws.AmazonClientException": (m) => AmazonClientException(m),
+      "java.lang.IllegalStateException": (m) => InvalidStateException(m),
+      "java.lang.RuntimeException": (m) => RuntimeException(m),
+    });
+  } else {
+    _errorMap = _iosErrors.map((k, v) {
+      return MapEntry(_iosErrorPrefix + k, v);
+    });
+  }
 }
 
 CognitoException tryConvertException(PlatformException e) {
-  if (!_initialized) _initialize();
+  if (_errorMap == null) _initialize();
   CognitoException ce;
   if (Platform.isAndroid) {
     ce = _androidErrors[e.code]?.call(e.message);
