@@ -3,33 +3,35 @@ import 'package:flutter_cognito_plugin/exception_serializer.dart';
 import 'package:flutter_cognito_plugin/exceptions.dart';
 import 'package:flutter_cognito_plugin/models.dart';
 import 'package:logging/logging.dart';
+import 'package:plugin_scaffold/plugin_scaffold.dart';
 
 export 'package:flutter_cognito_plugin/exceptions.dart';
 export 'package:flutter_cognito_plugin/models.dart';
 
-const _NAME = "flutter_cognito_plugin",
-    _platform = const MethodChannel('com.pycampers.flutter_cognito_plugin');
-final _l = Logger(_NAME);
-
 typedef OnUserStateChange(UserState userState);
 
-final _retryExceptions = [
-  ApolloException("Failed to parse http response"),
-  ApolloException("Failed to execute http call"),
-  AmazonClientException("Unable to execute HTTP request"),
-];
-
-bool _shouldRetry(CognitoException e) {
-  for (final rule in _retryExceptions) {
-    if (e.runtimeType == rule.runtimeType &&
-        e.message.toUpperCase().contains(rule.message.toUpperCase())) {
-      return true;
-    }
-  }
-  return false;
-}
-
 class Cognito {
+  static final l = Logger("cognito");
+
+  static const pkgName = "com.pycampers.flutter_cognito_plugin";
+  static const channel = MethodChannel(pkgName);
+
+  static List<CognitoException> retryForExceptions = [
+    ApolloException("Failed to parse http response", null),
+    ApolloException("Failed to execute http call", null),
+    AmazonClientException("Unable to execute HTTP request", null),
+  ];
+
+  static bool shouldRetry(CognitoException e) {
+    for (final rule in retryForExceptions) {
+      if (e.runtimeType == rule.runtimeType &&
+          e.message.toUpperCase().contains(rule.message.toUpperCase())) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   /// The number of times to automatically retry sending a request.
   ///
   /// Useful for cases where network is flaky.
@@ -45,12 +47,12 @@ class Cognito {
   /// The delay before retrying.
   static Duration retryDelay = Duration();
 
-  /// Invokes a method on specified [MethodChannel] (platform).
+  /// Invokes a method on specified [MethodChannel].
   ///
   /// This is useful for other plugins/apps that want
   /// to leverage the auto retry capabilities of this plugin.
-  static Future invokeMethodWithPlatform(
-    MethodChannel platform,
+  static Future invokeMethodWithChannel(
+    MethodChannel channel,
     String method, [
     dynamic arguments,
   ]) async {
@@ -58,25 +60,24 @@ class Cognito {
     while (true) {
       tries += 1;
       try {
-        return await platform.invokeMethod(method, arguments);
-      } catch (_e) {
-        if (_e is! PlatformException) rethrow;
-        final e = tryConvertException(_e);
-        if (e == null) rethrow;
-
-        if ((autoRetryLimit != null && tries > autoRetryLimit) ||
-            !_shouldRetry(e)) throw e;
-
-        _l.info(
-          "caught exception { $e, retryDelay: $retryDelay, tries: $tries, limit: $autoRetryLimit }",
-        );
-        await Future.delayed(retryDelay);
+        return await channel.invokeMethod(method, arguments);
+      } catch (e) {
+        try {
+          rethrowException(e);
+        } on CognitoException catch (e) {
+          if ((autoRetryLimit != null && tries > autoRetryLimit) ||
+              !shouldRetry(e)) rethrow;
+          l.info(
+            "caught exception { $e, retryDelay: $retryDelay, tries: $tries, limit: $autoRetryLimit }",
+          );
+          await Future.delayed(retryDelay);
+        }
       }
     }
   }
 
   static invokeMethod(String method, [dynamic arguments]) {
-    return invokeMethodWithPlatform(_platform, method, arguments);
+    return invokeMethodWithChannel(channel, method, arguments);
   }
 
   /// Initializes the AWS mobile client.
@@ -117,12 +118,14 @@ class Cognito {
   /// If `null` is passed, then the existing callback will be removed, if any.
   static void registerCallback(OnUserStateChange onUserStateChange) {
     if (onUserStateChange == null) {
-      _platform.setMethodCallHandler(null);
+      PluginScaffold.removeMethodCallHandlerByName(
+        channel,
+        "userStateCallback",
+      );
       return;
     }
-
-    _platform.setMethodCallHandler((call) {
-      onUserStateChange(UserState.values[call.arguments]);
+    PluginScaffold.setMethodCallHandler(channel, "userStateCallback", (value) {
+      onUserStateChange(UserState.values[value]);
     });
   }
 

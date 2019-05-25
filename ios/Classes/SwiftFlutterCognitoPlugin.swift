@@ -1,21 +1,37 @@
 import Flutter
+import plugin_scaffold
 import UIKit
 
+let pkgName = "com.pycampers.flutter_cognito_plugin"
+
 public class SwiftFlutterCognitoPlugin: NSObject, FlutterPlugin {
-    let cognito = Cognito()
-
     public static func register(with registrar: FlutterPluginRegistrar) {
-        let channel = FlutterMethodChannel(
-                name: "com.pycampers.flutter_cognito_plugin",
-                binaryMessenger: registrar.messenger()
+        let plugin = Cognito()
+        let channel = createPluginScaffold(
+            messenger: registrar.messenger(),
+            channelName: "com.pycampers.flutter_cognito_plugin",
+            methodMap: [
+                "initialize": plugin.initialize,
+                "signUp": plugin.signUp,
+                "confirmSignUp": plugin.confirmSignUp,
+                "resendSignUp": plugin.resendSignUp,
+                "signIn": plugin.signIn,
+                "confirmSignIn": plugin.confirmSignIn,
+                "forgotPassword": plugin.forgotPassword,
+                "confirmForgotPassword": plugin.confirmForgotPassword,
+                "signOut": plugin.signOut,
+                "getUsername": plugin.getUsername,
+                "isSignedIn": plugin.isSignedIn,
+                "getIdentityId": plugin.getIdentityId,
+                "currentUserState": plugin.currentUserState,
+                "getUserAttributes": plugin.getUserAttributes,
+                "updateUserAttributes": plugin.updateUserAttributes,
+                "confirmUpdateUserAttribute": plugin.confirmUpdateUserAttribute,
+                "getTokens": plugin.getTokens
+            ]
         )
-        let instance = SwiftFlutterCognitoPlugin()
-        registrar.addMethodCallDelegate(instance, channel: channel)
-    }
-
-    public func handle(
-            _ call: FlutterMethodCall, result: @escaping FlutterResult
-    ) {
-        cognito.callHandler(call: call, result: result)
+        plugin.awsClient.addUserStateListener("test" as NSString) { userState, _ in
+            channel.invokeMethod("userStateCallback", arguments: dumpUserState(userState))
+        }
     }
 }

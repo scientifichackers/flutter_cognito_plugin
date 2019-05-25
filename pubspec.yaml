@@ -11,8 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  plugin_scaffold:
-    path: ../flutter-plugin-scaffold
+  plugin_scaffold: ^1.0.0
   logging: ^0.11.3+2
 
 dev_dependencies:

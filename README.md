@@ -61,24 +61,17 @@ platform :ios, '9.0'
 ```
 
 To add the `awsconfiguration.json` file to iOS module, you will unfortunately,
-need to open up your project XCode.
-
-*You can also do the same thing with JetBrains AppCode, if you prefer.*
+need to open up your project in XCode.
 
 1. Start Xcode
-
 2. Click on ‘File > Open’
-
 3. Select the `ios/Runner.xcworkspace` file.
 
-Now just drag-drop the `awsconfiguration.json` file, from `android/app/src/main/res/raw/awsconfiguration.json` to XCode.
+Now just drag-drop the `awsconfiguration.json` file, from `android/app/src/main/res/raw/awsconfiguration.json` to XCode Runner (Right next to `AppDelegate.swift`).
 
-Here is a GIF showing how to do this.
+<blockquote class="imgur-embed-pub" lang="en" data-id="a/9aQ7Kyf"><a href="//imgur.com/9aQ7Kyf"></a></blockquote><script async src="//s.imgur.com/min/embed.js" charset="utf-8"></script>
 
-
-
-That will create a soft link to the file in the ios module,
-and hopefully bundle it into the final ios app.
+That should create a symlink to the file in the ios module, and bundle it into the final ios app.
 
 This way you won't need to maintain 2 config files.
 

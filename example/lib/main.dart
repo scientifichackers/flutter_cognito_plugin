@@ -75,9 +75,12 @@ class MyAppState extends State<MyApp> {
       Divider(
         color: Colors.black,
       ),
-      Text(
-        returnValue?.toString() ?? "return values will appear here.",
-        style: TextStyle(fontStyle: FontStyle.italic),
+      SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Text(
+          returnValue?.toString() ?? "return values will appear here.",
+          style: TextStyle(fontStyle: FontStyle.italic),
+        ),
       )
     ];
   }

@@ -9,9 +9,9 @@ class FlutterCognitoPlugin {
     companion object {
         @JvmStatic
         fun registerWith(registrar: Registrar) {
-            val cognito = Cognito(registrar.context())
-            val channel = createPluginScaffold(registrar.messenger(), PKG_NAME, cognito)
-            cognito.awsClient.addUserStateListener {
+            val plugin = Cognito(registrar.context())
+            val channel = createPluginScaffold(registrar.messenger(), PKG_NAME, plugin)
+            plugin.awsClient.addUserStateListener {
                 channel.invokeMethod("userStateCallback", dumpUserState(it))
             }
         }
