@@ -1,10 +1,9 @@
+[![Sponsor](https://img.shields.io/badge/Sponsor-jaaga_labs-red.svg?style=for-the-badge)](https://www.jaaga.in/labs)
+[![pub package](https://img.shields.io/pub/v/flutter_cognito_plugin.svg?style=for-the-badge)](https://pub.dartlang.org/packages/flutter_cognito_plugin)
+
 # Flutter Cognito Plugin
 
 An AWS Cognito plugin for flutter. Supports both iOS and Android.
-
-[![Sponsor](https://img.shields.io/badge/Sponsor-jaaga_labs-red.svg?style=for-the-badge)](https://www.jaaga.in/labs)
-
-[![pub package](https://img.shields.io/pub/v/flutter_cognito_plugin.svg?style=for-the-badge)](https://pub.dartlang.org/packages/flutter_cognito_plugin)
 
 ## Installation
 
@@ -69,7 +68,7 @@ need to open up your project in XCode.
 
 Now just drag-drop the `awsconfiguration.json` file, from `android/app/src/main/res/raw/awsconfiguration.json` to XCode Runner (Right next to `AppDelegate.swift`).
 
-<blockquote class="imgur-embed-pub" lang="en" data-id="a/9aQ7Kyf"><a href="//imgur.com/9aQ7Kyf"></a></blockquote><script async src="//s.imgur.com/min/embed.js" charset="utf-8"></script>
+[Here](https://i.imgur.com/tAXQuQ3.mp4) is a video.
 
 That should create a symlink to the file in the ios module, and bundle it into the final ios app.
 
@@ -80,7 +79,7 @@ This way you won't need to maintain 2 config files.
 The plugin comes with a showcase app that will let you try all features;
 see if you setup the `awsconfiguration.json` correctly.
 
-![Example Screenshot](https://i.imgur.com/5Lnl79O.png)
+<image src='https://i.imgur.com/5Lnl79O.png' height=400 />
 
 It's present in the usual `example` directory
 
