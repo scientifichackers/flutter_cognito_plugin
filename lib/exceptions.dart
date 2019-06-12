@@ -234,3 +234,8 @@ class ApolloException extends CognitoException {
 class RuntimeException extends CognitoException {
   RuntimeException(String message, String details) : super(message, details);
 }
+
+class UnknownHostException extends CognitoException {
+  UnknownHostException(String message, String details)
+      : super(message, details);
+}

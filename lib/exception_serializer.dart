@@ -7,7 +7,7 @@ final iosErrorRegex = RegExp(
   r'''(AWSMobileClient\.AWSMobileClientError\.)(\w+)(\s*\(\s*message\s*\:\s*['"]\s*)([^\"^\']*)''',
 );
 final androidErrorRegex = RegExp(
-  r'''(com\.amazonaws\.services\.cognitoidentityprovider\.model\.|java\.lang\.|com\.amazonaws\.)(\w+)''',
+  r'''(com\.amazonaws\.services\.cognitoidentityprovider\.model\.|java\.lang\.|com\.amazonaws\.|java\.net\.)(\w+)''',
 );
 
 void rethrowException(e) {
@@ -26,9 +26,9 @@ void rethrowException(e) {
     details = e.details;
   }
 
-  print(">> '$code' '$message'");
-
   switch (code) {
+    case "UnknownHostException":
+      throw UnknownHostException(message, details);
     case "AmazonClientException":
       throw AmazonClientException(message, details);
     case "IllegalStateException":

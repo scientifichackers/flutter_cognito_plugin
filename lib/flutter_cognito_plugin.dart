@@ -20,6 +20,7 @@ class Cognito {
     ApolloException("Failed to parse http response", null),
     ApolloException("Failed to execute http call", null),
     AmazonClientException("Unable to execute HTTP request", null),
+    UnknownHostException("Unable to resolve host", null),
   ];
 
   static bool shouldRetry(CognitoException e) {
