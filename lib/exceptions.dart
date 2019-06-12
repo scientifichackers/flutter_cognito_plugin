@@ -239,3 +239,8 @@ class UnknownHostException extends CognitoException {
   UnknownHostException(String message, String details)
       : super(message, details);
 }
+
+class SocketTimeoutException extends CognitoException {
+  SocketTimeoutException(String message, String details)
+      : super(message, details);
+}

@@ -69,7 +69,7 @@ class Cognito {
           if ((autoRetryLimit != null && tries > autoRetryLimit) ||
               !shouldRetry(e)) rethrow;
           l.info(
-            "caught exception { $e, retryDelay: $retryDelay, tries: $tries, limit: $autoRetryLimit }",
+            "caught exception { retryDelay: $retryDelay, tries: $tries, limit: $autoRetryLimit, $e }",
           );
           await Future.delayed(retryDelay);
         }

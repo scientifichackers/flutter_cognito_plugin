@@ -27,6 +27,8 @@ void rethrowException(e) {
   }
 
   switch (code) {
+    case "SocketTimeoutException":
+      throw SocketTimeoutException(message, details);
     case "UnknownHostException":
       throw UnknownHostException(message, details);
     case "AmazonClientException":
