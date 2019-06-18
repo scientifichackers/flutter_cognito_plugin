@@ -119,13 +119,10 @@ class Cognito {
   /// If `null` is passed, then the existing callback will be removed, if any.
   static void registerCallback(OnUserStateChange onUserStateChange) {
     if (onUserStateChange == null) {
-      PluginScaffold.removeMethodCallHandlerByName(
-        channel,
-        "userStateCallback",
-      );
+      PluginScaffold.removeCallHandlersWithName(channel, "userStateCallback");
       return;
     }
-    PluginScaffold.setMethodCallHandler(channel, "userStateCallback", (value) {
+    PluginScaffold.setCallHandler(channel, "userStateCallback", (value) {
       onUserStateChange(UserState.values[value]);
     });
   }
