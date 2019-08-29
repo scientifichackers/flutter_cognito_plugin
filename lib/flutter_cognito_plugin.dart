@@ -23,13 +23,19 @@ class Cognito {
     UnknownHostException("Unable to resolve host", null),
   ];
 
-  static bool shouldRetry(CognitoException e) {
+  static bool shouldRetry(dynamic e, int tries) {
+    if (e is! CognitoException ||
+        (autoRetryLimit != null && tries > autoRetryLimit)) {
+      return false;
+    }
+
     for (final rule in retryForExceptions) {
       if (e.runtimeType == rule.runtimeType &&
           e.message.toUpperCase().contains(rule.message.toUpperCase())) {
         return true;
       }
     }
+
     return false;
   }
 
@@ -62,16 +68,15 @@ class Cognito {
       tries += 1;
       try {
         return await channel.invokeMethod(method, arguments);
-      } catch (e) {
-        try {
-          rethrowException(e);
-        } on CognitoException catch (e) {
-          if ((autoRetryLimit != null && tries > autoRetryLimit) ||
-              !shouldRetry(e)) rethrow;
+      } catch (error, trace) {
+        var newError = convertException(error);
+        if (shouldRetry(newError, tries)) {
           l.info(
-            "caught exception { retryDelay: $retryDelay, tries: $tries, limit: $autoRetryLimit, $e }",
+            "caught exception { retryDelay: $retryDelay, tries: $tries, limit: $autoRetryLimit, $newError }",
           );
           await Future.delayed(retryDelay);
+        } else {
+          await Future.error(newError, trace);
         }
       }
     }

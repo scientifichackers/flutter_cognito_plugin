@@ -10,8 +10,8 @@ final androidErrorRegex = RegExp(
   r'''(com\.amazonaws\.services\.cognitoidentityprovider\.model\.|java\.lang\.|com\.amazonaws\.|java\.net\.)(\w+)''',
 );
 
-void rethrowException(e) {
-  if (e is! PlatformException) throw e;
+dynamic convertException(dynamic e) {
+  if (e is! PlatformException) return e;
 
   String code, message, details;
   if (Platform.isAndroid) {
@@ -28,102 +28,102 @@ void rethrowException(e) {
 
   switch (code) {
     case "SocketTimeoutException":
-      throw SocketTimeoutException(message, details);
+      return SocketTimeoutException(message, details);
     case "UnknownHostException":
-      throw UnknownHostException(message, details);
+      return UnknownHostException(message, details);
     case "AmazonClientException":
-      throw AmazonClientException(message, details);
+      return AmazonClientException(message, details);
     case "IllegalStateException":
-      throw InvalidStateException(message, details);
+      return InvalidStateException(message, details);
     case "RuntimeException":
-      throw RuntimeException(message, details);
+      return RuntimeException(message, details);
     case "AliasExistsException":
-      throw AliasExistsException(message, details);
+      return AliasExistsException(message, details);
     case "CodeDeliveryFailureException":
-      throw CodeDeliveryFailureException(message, details);
+      return CodeDeliveryFailureException(message, details);
     case "CodeMismatchException":
-      throw CodeMismatchException(message, details);
+      return CodeMismatchException(message, details);
     case "ExpiredCodeException":
-      throw ExpiredCodeException(message, details);
+      return ExpiredCodeException(message, details);
     case "GroupExistsException":
-      throw GroupExistsException(message, details);
+      return GroupExistsException(message, details);
     case "InternalErrorException":
-      throw InternalErrorException(message, details);
+      return InternalErrorException(message, details);
     case "InvalidLambdaResponseException":
-      throw InvalidLambdaResponseException(message, details);
+      return InvalidLambdaResponseException(message, details);
     case "InvalidOAuthFlowException":
-      throw InvalidOAuthFlowException(message, details);
+      return InvalidOAuthFlowException(message, details);
     case "InvalidParameterException":
-      throw InvalidParameterException(message, details);
+      return InvalidParameterException(message, details);
     case "InvalidPasswordException":
-      throw InvalidPasswordException(message, details);
+      return InvalidPasswordException(message, details);
     case "InvalidUserPoolConfigurationException":
-      throw InvalidUserPoolConfigurationException(message, details);
+      return InvalidUserPoolConfigurationException(message, details);
     case "LimitExceededException":
-      throw LimitExceededException(message, details);
+      return LimitExceededException(message, details);
     case "MfaMethodNotFoundException":
-      throw MfaMethodNotFoundException(message, details);
+      return MfaMethodNotFoundException(message, details);
     case "NotAuthorizedException":
-      throw NotAuthorizedException(message, details);
+      return NotAuthorizedException(message, details);
     case "PasswordResetRequiredException":
-      throw PasswordResetRequiredException(message, details);
+      return PasswordResetRequiredException(message, details);
     case "ResourceNotFoundException":
-      throw ResourceNotFoundException(message, details);
+      return ResourceNotFoundException(message, details);
     case "ScopeDoesNotExistException":
-      throw ScopeDoesNotExistException(message, details);
+      return ScopeDoesNotExistException(message, details);
     case "SoftwareTokenMFANotFoundException":
-      throw SoftwareTokenMFANotFoundException(message, details);
+      return SoftwareTokenMFANotFoundException(message, details);
     case "TooManyFailedAttemptsException":
-      throw TooManyFailedAttemptsException(message, details);
+      return TooManyFailedAttemptsException(message, details);
     case "TooManyRequestsException":
-      throw TooManyRequestsException(message, details);
+      return TooManyRequestsException(message, details);
     case "UnexpectedLambdaException":
-      throw UnexpectedLambdaException(message, details);
+      return UnexpectedLambdaException(message, details);
     case "UserLambdaValidationException":
-      throw UserLambdaValidationException(message, details);
+      return UserLambdaValidationException(message, details);
     case "UserNotConfirmedException":
-      throw UserNotConfirmedException(message, details);
+      return UserNotConfirmedException(message, details);
     case "UserNotFoundException":
-      throw UserNotFoundException(message, details);
+      return UserNotFoundException(message, details);
     case "UsernameExistsException":
-      throw UsernameExistsException(message, details);
+      return UsernameExistsException(message, details);
     case "UnknownException":
-      throw UnknownException(message, details);
+      return UnknownException(message, details);
     case "NotSignedInException":
-      throw NotSignedInException(message, details);
+      return NotSignedInException(message, details);
     case "IdentityIdUnavailableException":
-      throw IdentityIdUnavailableException(message, details);
+      return IdentityIdUnavailableException(message, details);
     case "GuestAccessNotAllowedException":
-      throw GuestAccessNotAllowedException(message, details);
+      return GuestAccessNotAllowedException(message, details);
     case "FederationProviderExistsException":
-      throw FederationProviderExistsException(message, details);
+      return FederationProviderExistsException(message, details);
     case "CognitoIdentityPoolNotConfiguredException":
-      throw CognitoIdentityPoolNotConfiguredException(message, details);
+      return CognitoIdentityPoolNotConfiguredException(message, details);
     case "UnableToSignInException":
-      throw UnableToSignInException(message, details);
+      return UnableToSignInException(message, details);
     case "InvalidStateException":
-      throw InvalidStateException(message, details);
+      return InvalidStateException(message, details);
     case "UserPoolNotConfiguredException":
-      throw UserPoolNotConfiguredException(message, details);
+      return UserPoolNotConfiguredException(message, details);
     case "UserCancelledSignInException":
-      throw UserCancelledSignInException(message, details);
+      return UserCancelledSignInException(message, details);
     case "BadRequestException":
-      throw BadRequestException(message, details);
+      return BadRequestException(message, details);
     case "ExpiredRefreshTokenException":
-      throw ExpiredRefreshTokenException(message, details);
+      return ExpiredRefreshTokenException(message, details);
     case "ErrorLoadingPageException":
-      throw ErrorLoadingPageException(message, details);
+      return ErrorLoadingPageException(message, details);
     case "SecurityFailedException":
-      throw SecurityFailedException(message, details);
+      return SecurityFailedException(message, details);
     case "IdTokenNotIssuedException":
-      throw IdTokenNotIssuedException(message, details);
+      return IdTokenNotIssuedException(message, details);
     case "IdTokenAndAcceessTokenNotIssuedException":
-      throw IdTokenAndAccessTokenNotIssuedException(message, details);
+      return IdTokenAndAccessTokenNotIssuedException(message, details);
     case "InvalidConfigurationException":
-      throw InvalidConfigurationException(message, details);
+      return InvalidConfigurationException(message, details);
     case "DeviceNotRememberedException":
-      throw DeviceNotRememberedException(message, details);
+      return DeviceNotRememberedException(message, details);
     default:
-      throw e;
+      return e;
   }
 }
