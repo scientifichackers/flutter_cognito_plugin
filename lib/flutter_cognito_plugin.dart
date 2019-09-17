@@ -175,6 +175,17 @@ class Cognito {
     );
   }
 
+  static Future<UserState> federatedSignIn(
+      String providerName, String token) async {
+    return UserState.values[(await invokeMethod(
+      "federatedSignIn",
+      {
+        "providerName": providerName ?? "",
+        "token": token ?? "",
+      },
+    ))];
+  }
+
   static Future<SignInResult> confirmSignIn(String confirmationCode) async {
     return SignInResult.fromMsg(
       await invokeMethod("confirmSignIn", {
