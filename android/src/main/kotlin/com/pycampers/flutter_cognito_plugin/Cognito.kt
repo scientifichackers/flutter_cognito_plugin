@@ -163,4 +163,14 @@ class Cognito(val context: Context) {
             override fun onError(e: Exception) = trySendThrowable(result, e)
         })
     }
+
+    fun federatedSignIn(call: MethodCall, result: MethodChannel.Result) {
+        val providerName = call.argument<String>("providerName")
+        val token = call.argument<String>("token")
+
+        awsClient.federatedSignIn(providerName, token, object : Callback<UserStateDetails> {
+            override fun onResult(s: UserStateDetails) = trySend(result) { dumpUserState(u) }
+            override fun onError(e: Exception) = trySendThrowable(result, e)
+        })
+    }
 }
