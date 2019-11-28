@@ -19,5 +19,5 @@ AWS Cognito plugin for flutter
   s.ios.deployment_target = '9.0'
 
   s.dependency 'plugin_scaffold'
-  s.dependency 'AWSMobileClient', '~> 2.9'
+  s.dependency 'AWSMobileClient', '= 2.9.8'
 end

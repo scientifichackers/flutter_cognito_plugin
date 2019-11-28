@@ -151,3 +151,19 @@ class Tokens {
         "idToken: $idToken, refreshToken: $refreshToken }";
   }
 }
+
+class Credentials {
+  final String accessKey, secretKey, sessionToken;
+  DateTime expiry;
+
+  Credentials.fromMsg(List msg)
+      : accessKey = msg[0],
+        secretKey = msg[1],
+        sessionToken = msg[2],
+        expiry = DateTime.fromMillisecondsSinceEpoch(msg[3]);
+
+  @override
+  String toString() {
+    return "Credentials { accessKey: $accessKey, secretKey: $secretKey, sesionToken: $sessionToken, expiry: $expiry }";
+  }
+}

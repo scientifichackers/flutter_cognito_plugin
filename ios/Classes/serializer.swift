@@ -72,3 +72,18 @@ func dumpUserState(_ userState: UserState) -> Int {
 func dumpTokens(_ tokens: Tokens) -> [String?] {
     return [tokens.accessToken?.tokenString, tokens.idToken?.tokenString, tokens.refreshToken?.tokenString]
 }
+
+extension Date {
+    var millisecondsSince1970: Int64 {
+        return Int64((self.timeIntervalSince1970 * 1000.0).rounded())
+    }
+}
+
+func dumpCredentials(_ credentials: AWSCredentials) -> [Any?] {
+    return [
+        credentials.accessKey,
+        credentials.secretKey,
+        credentials.sessionKey,
+        credentials.expiration?.millisecondsSince1970
+    ]
+}

@@ -41,6 +41,6 @@ android {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'com.amazonaws:aws-android-sdk-mobile-client:2.14.2'
+    implementation 'com.amazonaws:aws-android-sdk-mobile-client:2.16.4'
     implementation project(path: ':plugin_scaffold')
 }

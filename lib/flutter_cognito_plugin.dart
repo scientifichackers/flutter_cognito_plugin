@@ -255,4 +255,8 @@ class Cognito {
   static Future<Tokens> getTokens() async {
     return Tokens.fromMsg(await invokeMethod("getTokens"));
   }
+
+  static Future<Credentials> getCredentials() async {
+    return Credentials.fromMsg(await invokeMethod("getCredentials"));
+  }
 }

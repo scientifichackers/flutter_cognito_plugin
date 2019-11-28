@@ -27,7 +27,8 @@ public class SwiftFlutterCognitoPlugin: NSObject, FlutterPlugin {
                 "getUserAttributes": plugin.getUserAttributes,
                 "updateUserAttributes": plugin.updateUserAttributes,
                 "confirmUpdateUserAttribute": plugin.confirmUpdateUserAttribute,
-                "getTokens": plugin.getTokens
+                "getTokens": plugin.getTokens,
+                "getCredentials": plugin.getCredentials,
             ]
         )
         plugin.awsClient.addUserStateListener("test" as NSString) { userState, _ in

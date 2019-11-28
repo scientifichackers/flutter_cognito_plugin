@@ -248,6 +248,13 @@ class MyAppState extends State<MyApp> {
           return Cognito.getTokens();
         }),
       ),
+      RaisedButton(
+        child: Text('getCredentials()'),
+        onPressed: onPressWrapper(( ) {
+          return Cognito.getCredentials();
+        }
+        ),
+      )
     ];
   }
 

@@ -1,6 +1,7 @@
 package com.pycampers.flutter_cognito_plugin
 
 import android.content.Context
+import com.amazonaws.auth.CognitoCachingCredentialsProvider
 import com.amazonaws.mobile.client.AWSMobileClient
 import com.amazonaws.mobile.client.Callback
 import com.amazonaws.mobile.client.UserStateDetails
@@ -9,8 +10,8 @@ import com.amazonaws.mobile.client.results.SignInResult
 import com.amazonaws.mobile.client.results.SignUpResult
 import com.amazonaws.mobile.client.results.Tokens
 import com.amazonaws.mobile.client.results.UserCodeDeliveryDetails
+import com.pycampers.plugin_scaffold.sendThrowable
 import com.pycampers.plugin_scaffold.trySend
-import com.pycampers.plugin_scaffold.trySendThrowable
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 
@@ -24,7 +25,7 @@ class Cognito(val context: Context) {
             }
 
             override fun onError(e: Exception) {
-                trySendThrowable(result, e)
+                sendThrowable(result, e)
             }
         })
     }
@@ -36,7 +37,7 @@ class Cognito(val context: Context) {
 
         awsClient.signUp(username, password, userAttributes, null, object : Callback<SignUpResult> {
             override fun onResult(s: SignUpResult) = trySend(result) { dumpSignUpResult(s) }
-            override fun onError(e: Exception) = trySendThrowable(result, e)
+            override fun onError(e: Exception) = sendThrowable(result, e)
         })
     }
 
@@ -46,7 +47,7 @@ class Cognito(val context: Context) {
 
         awsClient.confirmSignUp(username, confirmationCode, object : Callback<SignUpResult> {
             override fun onResult(s: SignUpResult) = trySend(result) { dumpSignUpResult(s) }
-            override fun onError(e: Exception) = trySendThrowable(result, e)
+            override fun onError(e: Exception) = sendThrowable(result, e)
         })
     }
 
@@ -55,7 +56,7 @@ class Cognito(val context: Context) {
 
         awsClient.resendSignUp(username, object : Callback<SignUpResult> {
             override fun onResult(s: SignUpResult) = trySend(result) { dumpSignUpResult(s) }
-            override fun onError(e: Exception) = trySendThrowable(result, e)
+            override fun onError(e: Exception) = sendThrowable(result, e)
         })
     }
 
@@ -65,7 +66,7 @@ class Cognito(val context: Context) {
 
         awsClient.signIn(username, password, null, object : Callback<SignInResult> {
             override fun onResult(s: SignInResult) = trySend(result) { dumpSignInResult(s) }
-            override fun onError(e: Exception) = trySendThrowable(result, e)
+            override fun onError(e: Exception) = sendThrowable(result, e)
         })
     }
 
@@ -74,7 +75,7 @@ class Cognito(val context: Context) {
 
         awsClient.confirmSignIn(confirmationCode, object : Callback<SignInResult> {
             override fun onResult(s: SignInResult) = trySend(result) { dumpSignInResult(s) }
-            override fun onError(e: Exception) = trySendThrowable(result, e)
+            override fun onError(e: Exception) = sendThrowable(result, e)
         })
     }
 
@@ -86,7 +87,7 @@ class Cognito(val context: Context) {
                 trySend(result) { dumpForgotPasswordResult(f) }
             }
 
-            override fun onError(e: Exception) = trySendThrowable(result, e)
+            override fun onError(e: Exception) = sendThrowable(result, e)
         })
     }
 
@@ -94,73 +95,90 @@ class Cognito(val context: Context) {
         val newPassword = call.argument<String>("newPassword")
         val confirmationCode = call.argument<String>("confirmationCode")
 
-        awsClient.confirmForgotPassword(newPassword, confirmationCode, object : Callback<ForgotPasswordResult> {
-            override fun onResult(f: ForgotPasswordResult) = trySend(result) { dumpForgotPasswordResult(f) }
+        awsClient.confirmForgotPassword(
+            newPassword,
+            confirmationCode,
+            object : Callback<ForgotPasswordResult> {
+                override fun onResult(f: ForgotPasswordResult) =
+                    trySend(result) { dumpForgotPasswordResult(f) }
 
-            override fun onError(e: Exception) = trySendThrowable(result, e)
-        })
+                override fun onError(e: Exception) = sendThrowable(result, e)
+            })
     }
 
     fun getUserAttributes(call: MethodCall, result: MethodChannel.Result) {
         awsClient.getUserAttributes(object : Callback<Map<String, String>> {
             override fun onResult(attrs: Map<String, String>?) = trySend(result) { attrs }
-            override fun onError(e: Exception) = trySendThrowable(result, e)
+            override fun onError(e: Exception) = sendThrowable(result, e)
         })
     }
 
     fun updateUserAttributes(call: MethodCall, result: MethodChannel.Result) {
         val userAttributes = call.argument<Map<String, String>>("userAttributes")!!
 
-        awsClient.updateUserAttributes(userAttributes, object : Callback<List<UserCodeDeliveryDetails>> {
-            override fun onResult(u: List<UserCodeDeliveryDetails>) = trySend(result) {
-                u.map { dumpUserCodeDeliveryDetails(it) }
-            }
+        awsClient.updateUserAttributes(
+            userAttributes,
+            object : Callback<List<UserCodeDeliveryDetails>> {
+                override fun onResult(u: List<UserCodeDeliveryDetails>) {
+                    trySend(result) {
+                        u.map { dumpUserCodeDeliveryDetails(it) }
+                    }
+                }
 
-            override fun onError(e: Exception) = trySendThrowable(result, e)
-        })
+                override fun onError(e: Exception) = sendThrowable(result, e)
+            }
+        )
     }
 
     fun confirmUpdateUserAttribute(call: MethodCall, result: MethodChannel.Result) {
         val attributeName = call.argument<String>("attributeName")!!
         val confirmationCode = call.argument<String>("confirmationCode")!!
 
-        awsClient.confirmUpdateUserAttribute(attributeName, confirmationCode, object : Callback<Void> {
-            override fun onResult(u: Void) = trySend(result) { (u) }
-            override fun onError(e: Exception) = trySendThrowable(result, e)
-        })
+        awsClient.confirmUpdateUserAttribute(
+            attributeName,
+            confirmationCode,
+            object : Callback<Void> {
+                override fun onResult(u: Void) = trySend(result) { u }
+                override fun onError(e: Exception) = sendThrowable(result, e)
+            })
     }
 
     fun signOut(call: MethodCall, result: MethodChannel.Result) {
-        trySend(result) { awsClient.signOut() }
+        awsClient.signOut()
+        result.success(null)
     }
 
     fun getUsername(call: MethodCall, result: MethodChannel.Result) {
-        trySend(result) { awsClient.username }
+        result.success(awsClient.username)
     }
 
     fun isSignedIn(call: MethodCall, result: MethodChannel.Result) {
-        trySend(result) { awsClient.isSignedIn }
+        result.success(awsClient.isSignedIn)
     }
 
     fun getIdentityId(call: MethodCall, result: MethodChannel.Result) {
-        trySend(result) { awsClient.identityId }
+        result.success(awsClient.identityId)
     }
 
     fun currentUserState(call: MethodCall, result: MethodChannel.Result) {
-        trySend(result) { awsClient.currentUserState()?.userState?.ordinal }
+        result.success(awsClient.currentUserState()?.userState?.ordinal)
     }
 
     fun getTokens(call: MethodCall, result: MethodChannel.Result) {
         awsClient.getTokens(object : Callback<Tokens> {
-            override fun onResult(t: Tokens?) = trySend(result) {
-                listOf(
-                    t?.accessToken?.tokenString,
-                    t?.idToken?.tokenString,
-                    t?.refreshToken?.tokenString
-                )
-            }
-
-            override fun onError(e: Exception) = trySendThrowable(result, e)
+            override fun onResult(t: Tokens?) = trySend(result) { t?.let { dumpTokens(it) } ?: t }
+            override fun onError(e: Exception) = sendThrowable(result, e)
         })
+    }
+
+    fun getCredentials(call: MethodCall, result: MethodChannel.Result) {
+        result.success(
+            dumpCredentials(
+                CognitoCachingCredentialsProvider(
+                    context,
+                    awsClient.configuration
+                )
+            )
+        )
     }
 }

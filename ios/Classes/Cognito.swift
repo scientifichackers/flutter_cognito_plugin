@@ -169,4 +169,8 @@ class Cognito {
     func getTokens(call: FlutterMethodCall, result: @escaping FlutterResult) {
         self.awsClient.getTokens(self.createCallback(result, dumpTokens))
     }
+    
+    func getCredentials(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        self.awsClient.getAWSCredentials(self.createCallback(result, dumpCredentials))
+    }
 }
