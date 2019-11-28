@@ -188,7 +188,7 @@ class Cognito(val context: Context) {
 
         awsClient.federatedSignIn(providerName, token, object : Callback<UserStateDetails> {
             override fun onResult(u: UserStateDetails) = trySend(result) { dumpUserState(u) }
-            override fun onError(e: Exception) = trySendThrowable(result, e)
+            override fun onError(e: Exception) = sendThrowable(result, e)
         })
     }
 }

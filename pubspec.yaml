@@ -1,6 +1,6 @@
 name: flutter_cognito_plugin
 description: AWS Cognito plugin for flutter.
-version: 1.0.0
+version: 1.0.1
 author: Dev Aggarwal <devpxy@gmail.com>
 homepage: https://github.com/pycampers/flutter_cognito_plugin
 
