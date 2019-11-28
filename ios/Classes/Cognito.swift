@@ -169,8 +169,20 @@ class Cognito {
     func getTokens(call: FlutterMethodCall, result: @escaping FlutterResult) {
         self.awsClient.getTokens(self.createCallback(result, dumpTokens))
     }
-    
+
     func getCredentials(call: FlutterMethodCall, result: @escaping FlutterResult) {
         self.awsClient.getAWSCredentials(self.createCallback(result, dumpCredentials))
+    }
+
+    func federatedSignIn(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        let args = call.arguments as! [String: Any?]
+        let providerName = args["providerName"] as! String
+        let token = args["token"] as! String
+
+        awsClient.federatedSignIn(
+            providerName: providerName,
+            token: token,
+            completionHandler: createCallback(result, dumpUserState)
+        )
     }
 }
