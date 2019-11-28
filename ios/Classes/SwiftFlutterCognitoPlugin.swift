@@ -29,7 +29,6 @@ public class SwiftFlutterCognitoPlugin: NSObject, FlutterPlugin {
                 "confirmUpdateUserAttribute": plugin.confirmUpdateUserAttribute,
                 "getTokens": plugin.getTokens,
                 "getCredentials": plugin.getCredentials,
-                "getTokens": plugin.getTokens,
                 "federatedSignIn": plugin.federatedSignIn,
             ]
         )
