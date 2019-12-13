@@ -94,6 +94,13 @@ $ flutter run
 You can use AWS AppSync GraphQL API using this plugin easily. Just pass in the query as a String, and the query variables!
 
 ```dart
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:flutter_cognito_plugin/flutter_cognito_plugin.dart';
+import 'package:http/http.dart' as http;
+
+
 static Future<Map> query(
   String query,
   Map<String, dynamic> variables,
