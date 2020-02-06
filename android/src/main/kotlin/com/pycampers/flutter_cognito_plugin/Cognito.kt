@@ -106,6 +106,19 @@ class Cognito(val context: Context) {
             })
     }
 
+    fun changePassword(call: MethodCall, result: MethodChannel.Result) {
+        val oldPassword = call.argument<String>("oldPassword")
+        val newPassword = call.argument<String>("newPassword")
+
+        awsClient.changePassword(
+            oldPassword,
+            newPassword,
+            object : Callback<Void> {
+                override fun onResult(u: Void) = trySend(result) { u }
+                override fun onError(e: Exception) = sendThrowable(result, e)
+        })
+    }
+
     fun getUserAttributes(call: MethodCall, result: MethodChannel.Result) {
         awsClient.getUserAttributes(object : Callback<Map<String, String>> {
             override fun onResult(attrs: Map<String, String>?) = trySend(result) { attrs }
