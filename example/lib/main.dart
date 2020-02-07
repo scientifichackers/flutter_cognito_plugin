@@ -22,6 +22,7 @@ class MyAppState extends State<MyApp> {
   final passwordController = TextEditingController();
   final attrsController = TextEditingController();
   final newPasswordController = TextEditingController();
+  final oldPasswordController = TextEditingController();
   final confirmationCodeController = TextEditingController();
 
   Future<void> doLoad() async {
@@ -135,6 +136,10 @@ class MyAppState extends State<MyApp> {
       ],
       [
         TextField(
+          decoration: InputDecoration(labelText: 'oldPassword'),
+          controller: oldPasswordController,
+        ),
+        TextField(
           decoration: InputDecoration(labelText: 'newPassword'),
           controller: newPasswordController,
         ),
@@ -218,6 +223,15 @@ class MyAppState extends State<MyApp> {
             confirmationCodeController.text,
           );
         }),
+      ),
+      RaisedButton(
+        child: Text(
+          "changePassword(oldPassword, newPassword)",
+        ),
+        onPressed: onPressWrapper(() {
+          return Cognito.changePassword(
+              oldPasswordController.text, newPasswordController.text);
+        }),
       )
     ];
   }
@@ -250,10 +264,9 @@ class MyAppState extends State<MyApp> {
       ),
       RaisedButton(
         child: Text('getCredentials()'),
-        onPressed: onPressWrapper(( ) {
+        onPressed: onPressWrapper(() {
           return Cognito.getCredentials();
-        }
-        ),
+        }),
       )
     ];
   }
