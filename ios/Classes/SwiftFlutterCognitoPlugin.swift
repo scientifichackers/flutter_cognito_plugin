@@ -19,6 +19,7 @@ public class SwiftFlutterCognitoPlugin: NSObject, FlutterPlugin {
                 "confirmSignIn": plugin.confirmSignIn,
                 "forgotPassword": plugin.forgotPassword,
                 "confirmForgotPassword": plugin.confirmForgotPassword,
+                "changePassword": plugin.changePassword,
                 "signOut": plugin.signOut,
                 "getUsername": plugin.getUsername,
                 "isSignedIn": plugin.isSignedIn,
