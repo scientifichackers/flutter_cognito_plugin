@@ -88,3 +88,44 @@ $ git clone https://github.com/pycampers/flutter_cognito_plugin.git
 $ cd flutter_cognito_plugin/example
 $ flutter run
 ```
+
+## AppSync
+
+You can use AWS AppSync GraphQL API using this plugin easily. Just pass in the query as a String, and the query variables!
+
+```dart
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:flutter_cognito_plugin/flutter_cognito_plugin.dart';
+import 'package:http/http.dart' as http;
+
+
+static Future<Map> query(
+  String query,
+  Map<String, dynamic> variables,
+) async {
+  final tokens = await Cognito.getTokens();
+
+  final response = await http.post(
+    graphQLEndpoint,
+    headers: {
+      HttpHeaders.authorizationHeader: tokens.accessToken,
+      HttpHeaders.contentTypeHeader: ContentType.json.mimeType,
+    },
+    body: jsonEncode({
+      "query": query,
+      "variables": variables,
+    }),
+  );
+
+  if (response.statusCode == HttpStatus.ok) {
+    return jsonDecode(response.body);
+  }
+  
+  print(
+    "http request failed! { statusCode: ${response.statusCode}, body: ${response.body} }",
+  );
+  return null;
+}
+```
