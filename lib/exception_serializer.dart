@@ -21,7 +21,9 @@ dynamic convertException(dynamic e) {
   } else if (Platform.isIOS) {
     final match = iosErrorRegex.firstMatch(e.code);
     code = match?.group(2);
-    code = code[0].toUpperCase() + code.substring(1) + "Exception";
+    if (code != null) {
+      code = code[0].toUpperCase() + code.substring(1) + "Exception";
+    }
     message = match?.group(4);
     details = e.details;
   }
