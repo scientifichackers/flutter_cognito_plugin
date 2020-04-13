@@ -1,0 +1,53 @@
+PODS:
+  - AWSAuthCore (2.13.1):
+    - AWSCore (= 2.13.1)
+  - AWSCognitoIdentityProvider (2.13.1):
+    - AWSCognitoIdentityProviderASF (= 1.0.1)
+    - AWSCore (= 2.13.1)
+  - AWSCognitoIdentityProviderASF (1.0.1)
+  - AWSCore (2.13.1)
+  - AWSMobileClient (2.13.1):
+    - AWSAuthCore (= 2.13.1)
+    - AWSCognitoIdentityProvider (= 2.13.1)
+  - Flutter (1.0.0)
+  - flutter_cognito_plugin (0.0.1):
+    - AWSMobileClient (~> 2.13.1)
+    - Flutter
+    - plugin_scaffold
+  - plugin_scaffold (0.0.1):
+    - Flutter
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - flutter_cognito_plugin (from `.symlinks/plugins/flutter_cognito_plugin/ios`)
+  - plugin_scaffold (from `.symlinks/plugins/plugin_scaffold/ios`)
+
+SPEC REPOS:
+  trunk:
+    - AWSAuthCore
+    - AWSCognitoIdentityProvider
+    - AWSCognitoIdentityProviderASF
+    - AWSCore
+    - AWSMobileClient
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  flutter_cognito_plugin:
+    :path: ".symlinks/plugins/flutter_cognito_plugin/ios"
+  plugin_scaffold:
+    :path: ".symlinks/plugins/plugin_scaffold/ios"
+
+SPEC CHECKSUMS:
+  AWSAuthCore: c15735eb14cccf2a26e371e3a6a841d613d411ef
+  AWSCognitoIdentityProvider: 78f240befbd2e47a8e644946a9dd19812b0e5044
+  AWSCognitoIdentityProviderASF: f94f1a502e72ef3d0a1de93e10bf7a79c8698118
+  AWSCore: ec394695d054fa4136b20ccd22d8901faea5de04
+  AWSMobileClient: 8aede2dc1b0760709a2c02465e2b0c286b7cd00b
+  Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
+  flutter_cognito_plugin: f9de7bbafa0cdcf1f9bb7ffbdc9f0ac0d703333e
+  plugin_scaffold: f83b8103defd141436d8ee29ba4a3e1b5230fea1
+
+PODFILE CHECKSUM: e45c292f618eeca3034958d33b444b6e1249b55f
+
+COCOAPODS: 1.8.4
