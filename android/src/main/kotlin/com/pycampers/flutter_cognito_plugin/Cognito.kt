@@ -1,9 +1,13 @@
 package com.pycampers.flutter_cognito_plugin
 
+import android.app.Activity
 import android.content.Context
 import com.amazonaws.auth.CognitoCachingCredentialsProvider
 import com.amazonaws.mobile.client.AWSMobileClient
 import com.amazonaws.mobile.client.Callback
+import com.amazonaws.mobile.client.HostedUIOptions
+import com.amazonaws.mobile.client.SignInUIOptions
+import com.amazonaws.mobile.client.SignOutOptions
 import com.amazonaws.mobile.client.UserStateDetails
 import com.amazonaws.mobile.client.results.ForgotPasswordResult
 import com.amazonaws.mobile.client.results.SignInResult
@@ -13,12 +17,13 @@ import com.amazonaws.mobile.client.results.UserCodeDeliveryDetails
 import com.pycampers.plugin_scaffold.sendThrowable
 import com.pycampers.plugin_scaffold.trySend
 import io.flutter.plugin.common.MethodCall
-import io.flutter.plugin.common.MethodChannel
+import io.flutter.plugin.common.MethodChannel.Result
 
 class Cognito(val context: Context) {
+    var activity: Activity? = null
     val awsClient = AWSMobileClient.getInstance()!!
 
-    fun initialize(call: MethodCall, result: MethodChannel.Result) {
+    fun initialize(call: MethodCall, result: Result) {
         awsClient.initialize(context, object : Callback<UserStateDetails> {
             override fun onResult(u: UserStateDetails) {
                 trySend(result) { dumpUserState(u) }
@@ -30,7 +35,7 @@ class Cognito(val context: Context) {
         })
     }
 
-    fun signUp(call: MethodCall, result: MethodChannel.Result) {
+    fun signUp(call: MethodCall, result: Result) {
         val username = call.argument<String>("username")
         val password = call.argument<String>("password")
         val userAttributes = call.argument<Map<String, String>>("userAttributes")
@@ -41,7 +46,7 @@ class Cognito(val context: Context) {
         })
     }
 
-    fun confirmSignUp(call: MethodCall, result: MethodChannel.Result) {
+    fun confirmSignUp(call: MethodCall, result: Result) {
         val username = call.argument<String>("username")
         val confirmationCode = call.argument<String>("confirmationCode")
 
@@ -51,7 +56,7 @@ class Cognito(val context: Context) {
         })
     }
 
-    fun resendSignUp(call: MethodCall, result: MethodChannel.Result) {
+    fun resendSignUp(call: MethodCall, result: Result) {
         val username = call.argument<String>("username")
 
         awsClient.resendSignUp(username, object : Callback<SignUpResult> {
@@ -60,7 +65,7 @@ class Cognito(val context: Context) {
         })
     }
 
-    fun signIn(call: MethodCall, result: MethodChannel.Result) {
+    fun signIn(call: MethodCall, result: Result) {
         val username = call.argument<String>("username")
         val password = call.argument<String>("password")
 
@@ -70,7 +75,7 @@ class Cognito(val context: Context) {
         })
     }
 
-    fun confirmSignIn(call: MethodCall, result: MethodChannel.Result) {
+    fun confirmSignIn(call: MethodCall, result: Result) {
         val confirmationCode = call.argument<String>("confirmationCode")
 
         awsClient.confirmSignIn(confirmationCode, object : Callback<SignInResult> {
@@ -79,7 +84,7 @@ class Cognito(val context: Context) {
         })
     }
 
-    fun forgotPassword(call: MethodCall, result: MethodChannel.Result) {
+    fun forgotPassword(call: MethodCall, result: Result) {
         val username = call.argument<String>("username")
 
         awsClient.forgotPassword(username, object : Callback<ForgotPasswordResult> {
@@ -91,7 +96,7 @@ class Cognito(val context: Context) {
         })
     }
 
-    fun confirmForgotPassword(call: MethodCall, result: MethodChannel.Result) {
+    fun confirmForgotPassword(call: MethodCall, result: Result) {
         val newPassword = call.argument<String>("newPassword")
         val confirmationCode = call.argument<String>("confirmationCode")
 
@@ -106,14 +111,14 @@ class Cognito(val context: Context) {
             })
     }
 
-    fun getUserAttributes(call: MethodCall, result: MethodChannel.Result) {
+    fun getUserAttributes(call: MethodCall, result: Result) {
         awsClient.getUserAttributes(object : Callback<Map<String, String>> {
             override fun onResult(attrs: Map<String, String>?) = trySend(result) { attrs }
             override fun onError(e: Exception) = sendThrowable(result, e)
         })
     }
 
-    fun updateUserAttributes(call: MethodCall, result: MethodChannel.Result) {
+    fun updateUserAttributes(call: MethodCall, result: Result) {
         val userAttributes = call.argument<Map<String, String>>("userAttributes")!!
 
         awsClient.updateUserAttributes(
@@ -130,7 +135,7 @@ class Cognito(val context: Context) {
         )
     }
 
-    fun confirmUpdateUserAttribute(call: MethodCall, result: MethodChannel.Result) {
+    fun confirmUpdateUserAttribute(call: MethodCall, result: Result) {
         val attributeName = call.argument<String>("attributeName")!!
         val confirmationCode = call.argument<String>("confirmationCode")!!
 
@@ -143,35 +148,49 @@ class Cognito(val context: Context) {
             })
     }
 
-    fun signOut(call: MethodCall, result: MethodChannel.Result) {
-        awsClient.signOut()
-        result.success(null)
+    fun signOut(call: MethodCall, result: Result) {
+        val invalidateTokens = call.argument<Boolean>("invalidateTokens")!!
+        val signOutGlobally = call.argument<Boolean>("signOutGlobally")!!
+
+        val options = SignOutOptions
+            .builder()
+            .invalidateTokens(invalidateTokens)
+            .signOutGlobally(signOutGlobally)
+            .build()
+
+        awsClient.signOut(
+            options,
+            object : Callback<Void> {
+                override fun onResult(v: Void?) = trySend(result)
+                override fun onError(e: Exception) = sendThrowable(result, e)
+            }
+        )
     }
 
-    fun getUsername(call: MethodCall, result: MethodChannel.Result) {
+    fun getUsername(call: MethodCall, result: Result) {
         result.success(awsClient.username)
     }
 
-    fun isSignedIn(call: MethodCall, result: MethodChannel.Result) {
+    fun isSignedIn(call: MethodCall, result: Result) {
         result.success(awsClient.isSignedIn)
     }
 
-    fun getIdentityId(call: MethodCall, result: MethodChannel.Result) {
+    fun getIdentityId(call: MethodCall, result: Result) {
         result.success(awsClient.identityId)
     }
 
-    fun currentUserState(call: MethodCall, result: MethodChannel.Result) {
+    fun currentUserState(call: MethodCall, result: Result) {
         result.success(awsClient.currentUserState()?.userState?.ordinal)
     }
 
-    fun getTokens(call: MethodCall, result: MethodChannel.Result) {
+    fun getTokens(call: MethodCall, result: Result) {
         awsClient.getTokens(object : Callback<Tokens> {
             override fun onResult(t: Tokens?) = trySend(result) { t?.let { dumpTokens(it) } ?: t }
             override fun onError(e: Exception) = sendThrowable(result, e)
         })
     }
 
-    fun getCredentials(call: MethodCall, result: MethodChannel.Result) {
+    fun getCredentials(call: MethodCall, result: Result) {
         result.success(
             dumpCredentials(
                 CognitoCachingCredentialsProvider(
@@ -182,7 +201,7 @@ class Cognito(val context: Context) {
         )
     }
 
-    fun federatedSignIn(call: MethodCall, result: MethodChannel.Result) {
+    fun federatedSignIn(call: MethodCall, result: Result) {
         val providerName = call.argument<String>("providerName")
         val token = call.argument<String>("token")
 
@@ -190,5 +209,36 @@ class Cognito(val context: Context) {
             override fun onResult(u: UserStateDetails) = trySend(result) { dumpUserState(u) }
             override fun onError(e: Exception) = sendThrowable(result, e)
         })
+    }
+
+    fun showSignIn(call: MethodCall, result: Result) {
+        if (activity == null) {
+            result.error(
+                "ActivityNotAvailable",
+                "This method cannot be called without an active android Activity",
+                null
+            )
+            return
+        }
+
+        val scopes = call.argument<List<String>>("scopes")!!
+        val identityProvider = call.argument<String>("identityProvider")!!
+
+        val hostedUIOptions = HostedUIOptions.builder()
+            .scopes(*scopes.toTypedArray())
+            .identityProvider(identityProvider)
+            .build()
+        val signInUIOptions = SignInUIOptions.builder()
+            .hostedUIOptions(hostedUIOptions)
+            .build()
+
+        AWSMobileClient.getInstance().showSignIn(
+            activity,
+            signInUIOptions,
+            object : Callback<UserStateDetails> {
+                override fun onResult(u: UserStateDetails) = trySend(result) { dumpUserState(u) }
+                override fun onError(e: Exception) = sendThrowable(result, e)
+            }
+        )
     }
 }

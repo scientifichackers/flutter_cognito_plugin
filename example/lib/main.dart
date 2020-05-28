@@ -21,7 +21,6 @@ class Main extends StatelessWidget {
   }
 }
 
-
 class MyApp extends StatefulWidget {
   const MyApp({Key key}) : super(key: key);
 
@@ -207,6 +206,15 @@ class MyAppState extends State<MyApp> {
         child: Text("signOut()"),
         onPressed: onPressWrapper(() {
           return Cognito.signOut();
+        }),
+      ),
+      RaisedButton(
+        child: Text("showSignIn()"),
+        onPressed: onPressWrapper(() {
+          return Cognito.showSignIn(
+            identityProvider: "google",
+            scopes: ["email", "openid"],
+          );
         }),
       ),
     ];
