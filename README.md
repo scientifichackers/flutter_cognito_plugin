@@ -74,6 +74,76 @@ That should create a symlink to the file in the ios module, and bundle it into t
 
 This way you won't need to maintain 2 config files.
 
+## Hosted UI
+
+The [Hosted UI](https://docs.amplify.aws/sdk/auth/hosted-ui/q/platform/android) feature is needed for using Social login.
+Unfortunately, this requires you to modify native code in your app.
+
+First, add the following section to `android/app/src/main/res/raw/awsconfiguration.json` -
+
+(`"myapp://callback"` and `"myapp://signout"` are custom urls you can provide in the "App client settings" section of Cognito User Pools)
+
+```json
+{
+  ...
+
+  "Auth": {
+    "Default": {
+      "OAuth": {
+        "WebDomain": "XXX.auth.ap-south-1.amazoncognito.com",
+        "AppClientId": "XXXXXXXX",
+        "SignInRedirectURI": "myapp://callback",
+        "SignOutRedirectURI": "myapp://signout",
+        "Scopes": ["email"]
+      }
+    }
+  }
+}
+```
+
+### Android
+
+Open your app's [`andorid/app/src/main/com/kotlin/.../MainActivity.kt`](example/android/app/src/main/kotlin/com/pycampers/flutter_cognito_plugin_example/MainActivity.kt)
+and replace `FlutterActivity()` by `CognitoPluginActivity("<url scheme>")`.
+
+Here's what it should look like -
+
+```kotlin
+package ...
+
+import androidx.annotation.NonNull
+import com.pycampers.flutter_cognito_plugin.CognitoPluginActivity
+import io.flutter.embedding.engine.FlutterEngine
+import io.flutter.plugins.GeneratedPluginRegistrant
+
+class MainActivity : CognitoPluginActivity("myapp") {
+    override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
+        GeneratedPluginRegistrant.registerWith(flutterEngine);
+    }
+}
+```
+
+Also add the following to [`android/app/src/main/AndroidManifest.xml`](example/android/app/src/main/AndroidManifest.xml) -
+
+```xml
+<manifest ...>
+        <application ...>
+            ...
+
+            <!-- Add this section for AWS Cognito hosted UI-->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="myapp" />
+            </intent-filter>
+
+        </application>
+</manifest>
+```
+
 ## Usage
 
 The plugin comes with a showcase app that will let you try all features;
@@ -88,6 +158,7 @@ $ git clone https://github.com/pycampers/flutter_cognito_plugin.git
 $ cd flutter_cognito_plugin/example
 $ flutter run
 ```
+
 
 ## AppSync
 

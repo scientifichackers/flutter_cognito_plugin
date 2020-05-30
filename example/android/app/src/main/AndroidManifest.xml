@@ -21,7 +21,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
-            <!-- for AWS Cognito hosted UI-->
+            <!-- Add this section for AWS Cognito hosted UI-->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
