@@ -144,7 +144,7 @@ class MainActivity : CognitoPluginActivity("myapp") {
 </manifest>
 ```
 
-## iOS
+### iOS
 
 1. Open you apps's [`ios/Runner/AppDelegate.swift`](example/ios/Runner/AppDelegate.swift),
 and replace `FlutterAppDelegate` with `CognitoAppDelegate`.
