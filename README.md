@@ -125,7 +125,7 @@ class MainActivity : CognitoPluginActivity("myapp") {
 
 2. Add the following to [`android/app/src/main/AndroidManifest.xml`](example/android/app/src/main/AndroidManifest.xml) -
 
-```
+```xml
 <manifest ...>
         <application ...>
             ...
@@ -170,7 +170,7 @@ import UIKit
 
 2. Add the following to [`ios/Runner/Info.plist`](example/ios/Runner/Info.plist)
 
-```plist
+```
 <plist version="1.0">
 <dict>
     <!-- YOUR OTHER PLIST ENTRIES HERE -->
