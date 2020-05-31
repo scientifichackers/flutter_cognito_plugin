@@ -103,7 +103,7 @@ First, add the following section to `android/app/src/main/res/raw/awsconfigurati
 
 ### Android
 
-Open your app's [`andorid/app/src/main/com/kotlin/.../MainActivity.kt`](example/android/app/src/main/kotlin/com/pycampers/flutter_cognito_plugin_example/MainActivity.kt)
+1. Open your app's [`andorid/app/src/main/com/kotlin/.../MainActivity.kt`](example/android/app/src/main/kotlin/com/pycampers/flutter_cognito_plugin_example/MainActivity.kt)
 and replace `FlutterActivity()` by `CognitoPluginActivity("<url scheme>")`.
 
 Here's what it should look like -
@@ -123,7 +123,7 @@ class MainActivity : CognitoPluginActivity("myapp") {
 }
 ```
 
-Also add the following to [`android/app/src/main/AndroidManifest.xml`](example/android/app/src/main/AndroidManifest.xml) -
+2. Add the following to [`android/app/src/main/AndroidManifest.xml`](example/android/app/src/main/AndroidManifest.xml) -
 
 ```xml
 <manifest ...>
@@ -142,6 +142,55 @@ Also add the following to [`android/app/src/main/AndroidManifest.xml`](example/a
 
         </application>
 </manifest>
+```
+
+## iOS
+
+1. Open you apps's [`ios/Runner/AppDelegate.swift`](example/ios/Runner/AppDelegate.swift),
+and replace `FlutterAppDelegate` with `CognitoAppDelegate`.
+
+Here's what it should look like -
+
+```swift
+import Flutter
+import flutter_cognito_plugin
+import UIKit
+
+@UIApplicationMain
+@objc class AppDelegate: CognitoAppDelegate {
+    override func application(
+        _ application: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+    ) -> Bool {
+        GeneratedPluginRegistrant.register(with: self)
+        return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+    }
+}
+```
+
+2. Add the following to [`ios/Runner/Info.plist`](example/ios/Runner/Info.plist)
+
+```plist
+<plist version="1.0">
+<dict>
+    <!-- YOUR OTHER PLIST ENTRIES HERE -->
+
+    <!-- ADD AN ENTRY TO CFBundleURLTypes for Cognito Auth -->
+    <!-- IF YOU DO NOT HAVE CFBundleURLTypes, YOU CAN COPY THE WHOLE BLOCK BELOW -->
+    <key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>myapp</string>
+            </array>
+        </dict>
+    </array>
+</dict>
+</array>
+
+<!-- ... -->
+</dict>
 ```
 
 ## Usage
