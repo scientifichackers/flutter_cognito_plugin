@@ -206,12 +206,12 @@ Cognito.showSignIn(
 
 ## Usage
 
-The plugin comes with a showcase app that will let you try all features;
-see if you setup the `awsconfiguration.json` correctly.
+The plugin comes with a showcase app that will let you try all features --
+given that you setup the `awsconfiguration.json` correctly.
 
 <image src='https://i.imgur.com/5Lnl79O.png' height=400 />
 
-It's present in the usual `example` directory
+It's present in the usual [`example`](https://github.com/scientifichackers/flutter_cognito_plugin/blob/master/example/lib/main.dart) directory
 
 ```
 $ git clone https://github.com/pycampers/flutter_cognito_plugin.git
