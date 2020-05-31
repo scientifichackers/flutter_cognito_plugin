@@ -75,7 +75,7 @@ class Cognito {
         let args = call.arguments as! [String: Any?]
         let username = args["username"] as! String
         let password = args["password"] as! String
-        
+
         awsClient.signIn(
             username: username,
             password: password,
@@ -184,5 +184,31 @@ class Cognito {
             token: token,
             completionHandler: createCallback(result, dumpUserState)
         )
+    }
+
+    func showSignIn(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        let navigationController = CognitoAppDelegate.navigationController
+        if navigationController == nil {
+            let error = FlutterError(
+                code: "UIViewControllerNotAvailable",
+                message: "This method cannot be called without an active ios UINavigationController.\nDid you forget to set SwiftFlutterCognitoPlugin.delegate in AppDelegate.swift?",
+                details: nil
+            )
+            result(error)
+        } else {
+            let args = call.arguments as! [String: Any?]
+            let identityProvider = args["identityProvider"] as! String
+            let scopes = args["scopes"] as! [String]
+            
+            // Optionally override the scopes based on the usecase.
+            let hostedUIOptions = HostedUIOptions(scopes: scopes, identityProvider: identityProvider)
+
+            // Present the Hosted UI sign in.
+            self.awsClient.showSignIn(
+                navigationController: navigationController!,
+                hostedUIOptions: hostedUIOptions,
+                createCallback(result, dumpUserState)
+            )
+        }
     }
 }

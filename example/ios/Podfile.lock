@@ -1,17 +1,61 @@
 PODS:
+  - AWSAuth (2.13.1):
+    - AWSAuth/Core (= 2.13.1)
+    - AWSAuth/FacebookSignIn (= 2.13.1)
+    - AWSAuth/GoogleSignIn (= 2.13.1)
+    - AWSAuth/UI (= 2.13.1)
+    - AWSAuth/UserPoolsSignIn (= 2.13.1)
+  - AWSAuth/Core (2.13.1):
+    - AWSAuthCore (= 2.13.1)
+  - AWSAuth/FacebookSignIn (2.13.1):
+    - AWSFacebookSignIn (= 2.13.1)
+  - AWSAuth/GoogleSignIn (2.13.1):
+    - AWSGoogleSignIn (= 2.13.1)
+  - AWSAuth/UI (2.13.1):
+    - AWSAuthUI (= 2.13.1)
+  - AWSAuth/UserPoolsSignIn (2.13.1):
+    - AWSUserPoolsSignIn (= 2.13.1)
   - AWSAuthCore (2.13.1):
+    - AWSCore (= 2.13.1)
+  - AWSAuthUI (2.13.1):
+    - AWSAuthCore (= 2.13.1)
+    - AWSCore (= 2.13.1)
+  - AWSCognito (2.13.1):
     - AWSCore (= 2.13.1)
   - AWSCognitoIdentityProvider (2.13.1):
     - AWSCognitoIdentityProviderASF (= 1.0.1)
     - AWSCore (= 2.13.1)
   - AWSCognitoIdentityProviderASF (1.0.1)
   - AWSCore (2.13.1)
+  - AWSFacebookSignIn (2.13.1):
+    - AWSAuthCore (= 2.13.1)
+    - FBSDKCoreKit (= 5.8)
+    - FBSDKLoginKit (= 5.8)
+  - AWSGoogleSignIn (2.13.1):
+    - AWSAuthCore (= 2.13.1)
   - AWSMobileClient (2.13.1):
     - AWSAuthCore (= 2.13.1)
     - AWSCognitoIdentityProvider (= 2.13.1)
+  - AWSUserPoolsSignIn (2.13.1):
+    - AWSAuthCore (= 2.13.1)
+    - AWSCognitoIdentityProvider (= 2.13.1)
+  - FBSDKCoreKit (5.8.0):
+    - FBSDKCoreKit/Basics (= 5.8.0)
+    - FBSDKCoreKit/Core (= 5.8.0)
+  - FBSDKCoreKit/Basics (5.8.0)
+  - FBSDKCoreKit/Core (5.8.0):
+    - FBSDKCoreKit/Basics
+  - FBSDKLoginKit (5.8.0):
+    - FBSDKLoginKit/Login (= 5.8.0)
+  - FBSDKLoginKit/Login (5.8.0):
+    - FBSDKCoreKit (~> 5.0)
   - Flutter (1.0.0)
   - flutter_cognito_plugin (0.0.1):
-    - AWSMobileClient (~> 2.13.1)
+    - AWSAuth (~> 2.13.0)
+    - AWSAuthUI (~> 2.13.0)
+    - AWSCognito (~> 2.13.0)
+    - AWSMobileClient (~> 2.13.0)
+    - AWSUserPoolsSignIn (~> 2.13.0)
     - Flutter
     - plugin_scaffold
   - plugin_scaffold (0.0.1):
@@ -24,11 +68,19 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
+    - AWSAuth
     - AWSAuthCore
+    - AWSAuthUI
+    - AWSCognito
     - AWSCognitoIdentityProvider
     - AWSCognitoIdentityProviderASF
     - AWSCore
+    - AWSFacebookSignIn
+    - AWSGoogleSignIn
     - AWSMobileClient
+    - AWSUserPoolsSignIn
+    - FBSDKCoreKit
+    - FBSDKLoginKit
 
 EXTERNAL SOURCES:
   Flutter:
@@ -39,13 +91,21 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/plugin_scaffold/ios"
 
 SPEC CHECKSUMS:
+  AWSAuth: 52d3af37a45bdfde781bb23094a9a003cfc448ca
   AWSAuthCore: c15735eb14cccf2a26e371e3a6a841d613d411ef
+  AWSAuthUI: d61165c5dfb9ad342a51991253c80f417a82fb9e
+  AWSCognito: c6311e35fe74c9ee490fff3e03548afae629dc5c
   AWSCognitoIdentityProvider: 78f240befbd2e47a8e644946a9dd19812b0e5044
   AWSCognitoIdentityProviderASF: f94f1a502e72ef3d0a1de93e10bf7a79c8698118
   AWSCore: ec394695d054fa4136b20ccd22d8901faea5de04
+  AWSFacebookSignIn: 7ddf8fad3c4e7edd878c1ccfd864da33c9cb7c27
+  AWSGoogleSignIn: 9569e863f01bfbb21a16416ab3d8da313fbc04b7
   AWSMobileClient: 8aede2dc1b0760709a2c02465e2b0c286b7cd00b
+  AWSUserPoolsSignIn: 136d2dcd545d46246ec2f1308d728824f131e629
+  FBSDKCoreKit: e7dcac0aabcfb09d0166998edd95fe3b05a0ce5d
+  FBSDKLoginKit: 1b0cf04df0370b37404213157b060d6666ede814
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
-  flutter_cognito_plugin: f9de7bbafa0cdcf1f9bb7ffbdc9f0ac0d703333e
+  flutter_cognito_plugin: 1b7f93b023433f702c8c5f953aea379af363fc5b
   plugin_scaffold: f83b8103defd141436d8ee29ba4a3e1b5230fea1
 
 PODFILE CHECKSUM: e45c292f618eeca3034958d33b444b6e1249b55f
