@@ -1,4 +1,3 @@
-import AWSMobileClient
 import Flutter
 import flutter_cognito_plugin
 import UIKit

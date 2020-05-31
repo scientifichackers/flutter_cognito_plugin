@@ -191,7 +191,7 @@ class Cognito {
         if navigationController == nil {
             let error = FlutterError(
                 code: "UIViewControllerNotAvailable",
-                message: "This method cannot be called without an active ios UINavigationController.\nDid you forget to set SwiftFlutterCognitoPlugin.delegate in AppDelegate.swift?",
+                message: "This method cannot be called without access to a UINavigationController.\nDid you forget to replace `FlutterAppDelegate` with `CognitoAppDelegate` in AppDelegate.swift?",
                 details: nil
             )
             result(error)
