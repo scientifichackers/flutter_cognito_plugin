@@ -193,6 +193,17 @@ import UIKit
 </dict>
 ```
 
+### Dart
+
+Once the native setup is complete, you can use the following in your flutter app to launch the Hosted UI -
+
+```dart
+Cognito.showSignIn(
+  identityProvider: "google",
+  scopes: ["email", "openid"],
+);
+```
+
 ## Usage
 
 The plugin comes with a showcase app that will let you try all features;
