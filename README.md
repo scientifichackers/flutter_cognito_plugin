@@ -83,7 +83,7 @@ First, add the following section to `android/app/src/main/res/raw/awsconfigurati
 
 (`"myapp://callback"` and `"myapp://signout"` are custom urls you can provide in the "App client settings" section of Cognito User Pools)
 
-```json
+```
 {
   ...
 
@@ -125,7 +125,7 @@ class MainActivity : CognitoPluginActivity("myapp") {
 
 2. Add the following to [`android/app/src/main/AndroidManifest.xml`](example/android/app/src/main/AndroidManifest.xml) -
 
-```xml
+```
 <manifest ...>
         <application ...>
             ...
