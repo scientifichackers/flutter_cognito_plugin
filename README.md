@@ -147,7 +147,7 @@ class MainActivity : CognitoPluginActivity("myapp") {
 ### iOS
 
 1. Open you apps's [`ios/Runner/AppDelegate.swift`](example/ios/Runner/AppDelegate.swift),
-and replace `FlutterAppDelegate` with `CognitoAppDelegate`.
+and replace `FlutterAppDelegate` with `CognitoPluginAppDelegate`.
 
 Here's what it should look like -
 
@@ -157,7 +157,7 @@ import flutter_cognito_plugin
 import UIKit
 
 @UIApplicationMain
-@objc class AppDelegate: CognitoAppDelegate {
+@objc class AppDelegate: CognitoPluginAppDelegate {
     override func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
