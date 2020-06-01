@@ -187,11 +187,12 @@ class Cognito {
     }
 
     func showSignIn(call: FlutterMethodCall, result: @escaping FlutterResult) {
-        let navigationController = CognitoAppDelegate.navigationController
+        let navigationController = CognitoPluginAppDelegate.navigationController
         if navigationController == nil {
             let error = FlutterError(
-                code: "UIViewControllerNotAvailable",
-                message: "This method cannot be called without access to a UINavigationController.\nDid you forget to replace `FlutterAppDelegate` with `CognitoAppDelegate` in AppDelegate.swift?",
+                code: "UINavigationControllerNotFound",
+                message: "This method cannot be called without access to a UINavigationController.\n" +
+                    "Did you forget to replace `FlutterAppDelegate` with `CognitoPluginAppDelegate` in your app's AppDelegate.swift?",
                 details: nil
             )
             result(error)
@@ -199,7 +200,7 @@ class Cognito {
             let args = call.arguments as! [String: Any?]
             let identityProvider = args["identityProvider"] as! String
             let scopes = args["scopes"] as! [String]
-            
+
             // Optionally override the scopes based on the usecase.
             let hostedUIOptions = HostedUIOptions(scopes: scopes, identityProvider: identityProvider)
 

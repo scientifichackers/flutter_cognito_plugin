@@ -5,17 +5,19 @@ import AWSMobileClient
 
 let pkgName = "com.pycampers.flutter_cognito_plugin"
 
-open class CognitoAppDelegate: FlutterAppDelegate {
+open class CognitoPluginAppDelegate: FlutterAppDelegate {
     public static var navigationController: UINavigationController?
 
     open override func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
-        CognitoAppDelegate.navigationController = UINavigationController(rootViewController: window.rootViewController!)
-        CognitoAppDelegate.navigationController?.isNavigationBarHidden = true
-        window.rootViewController = CognitoAppDelegate.navigationController
+        let navigationController = UINavigationController(rootViewController: window.rootViewController!)
+        navigationController.isNavigationBarHidden = true
+        window.rootViewController = navigationController
         window.makeKeyAndVisible()
+        
+        CognitoPluginAppDelegate.navigationController = navigationController
         
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }

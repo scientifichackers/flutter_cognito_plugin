@@ -215,7 +215,8 @@ class Cognito(val context: Context) {
         if (activity == null) {
             result.error(
                 "ActivityNotAvailable",
-                "This method cannot be called without an active android Activity",
+                "This method cannot be called without an Activity.\n" +
+                    "Did you forget to replace `FlutterActivity` by `CognitoPluginActivity` in your app's    MainActivity.kt?",
                 null
             )
             return

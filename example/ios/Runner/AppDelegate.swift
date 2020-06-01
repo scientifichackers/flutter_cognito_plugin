@@ -3,7 +3,7 @@ import flutter_cognito_plugin
 import UIKit
 
 @UIApplicationMain
-@objc class AppDelegate: CognitoAppDelegate {
+@objc class AppDelegate: CognitoPluginAppDelegate {
     override func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
