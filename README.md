@@ -9,7 +9,7 @@ An AWS Cognito plugin for flutter. Supports both iOS and Android.
 
 First follow the regular flutter plugin installation on [Dart Pub](https://pub.dartlang.org/packages/flutter_cognito_plugin#-installing-tab-).
 
-*Make sure you have built the app once for both Android/iOS before continuing.*
+_Make sure you have built the app once for both Android/iOS before continuing._
 
 ---
 
@@ -55,6 +55,7 @@ Just do `$ amplify init` from the `android` & `ios` folder of your app.
 Run `$ pod init` from the `ios` folder of your app.
 
 Now, open `ios/Podfile`. Ensure ios version is set to a minimum of `9.0`.
+
 ```podspec
 platform :ios, '9.0'
 ```
@@ -92,9 +93,10 @@ First, add the following section to `android/app/src/main/res/raw/awsconfigurati
       "OAuth": {
         "WebDomain": "XXX.auth.ap-south-1.amazoncognito.com",
         "AppClientId": "XXXXXXXX",
+        "AppClientSecret": "XXXXX"
         "SignInRedirectURI": "myapp://callback",
         "SignOutRedirectURI": "myapp://signout",
-        "Scopes": ["email"]
+        "Scopes": ["email, "openid"]
       }
     }
   }
@@ -104,7 +106,7 @@ First, add the following section to `android/app/src/main/res/raw/awsconfigurati
 ### Android
 
 1. Open your app's [`andorid/app/src/main/com/kotlin/.../MainActivity.kt`](example/android/app/src/main/kotlin/com/pycampers/flutter_cognito_plugin_example/MainActivity.kt)
-and replace `FlutterActivity()` by `CognitoPluginActivity("<url scheme>")`.
+   and replace `FlutterActivity()` by `CognitoPluginActivity("<url scheme>")`.
 
 Here's what it should look like -
 
@@ -147,7 +149,7 @@ class MainActivity : CognitoPluginActivity("myapp") {
 ### iOS
 
 1. Open you apps's [`ios/Runner/AppDelegate.swift`](example/ios/Runner/AppDelegate.swift),
-and replace `FlutterAppDelegate` with `CognitoPluginAppDelegate`.
+   and replace `FlutterAppDelegate` with `CognitoPluginAppDelegate`.
 
 Here's what it should look like -
 
@@ -199,7 +201,7 @@ Once the native setup is complete, you can use the following in your flutter app
 
 ```dart
 Cognito.showSignIn(
-  identityProvider: "google",
+  identityProvider: "Cognito",
   scopes: ["email", "openid"],
 );
 ```
@@ -218,7 +220,6 @@ $ git clone https://github.com/pycampers/flutter_cognito_plugin.git
 $ cd flutter_cognito_plugin/example
 $ flutter run
 ```
-
 
 ## AppSync
 
@@ -253,7 +254,7 @@ static Future<Map> query(
   if (response.statusCode == HttpStatus.ok) {
     return jsonDecode(response.body);
   }
-  
+
   print(
     "http request failed! { statusCode: ${response.statusCode}, body: ${response.body} }",
   );

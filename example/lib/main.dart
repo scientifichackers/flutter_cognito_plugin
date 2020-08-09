@@ -212,7 +212,7 @@ class MyAppState extends State<MyApp> {
         child: Text("showSignIn()"),
         onPressed: onPressWrapper(() {
           return Cognito.showSignIn(
-            identityProvider: "google",
+            identityProvider: "Cognito",
             scopes: ["email", "openid"],
           );
         }),
