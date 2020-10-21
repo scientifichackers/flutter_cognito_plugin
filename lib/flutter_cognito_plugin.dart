@@ -195,6 +195,16 @@ class Cognito {
     );
   }
 
+  static Future<void> changePassword(
+    String oldPassword,
+    String newPassword,
+  ) async {
+    var res = await invokeMethod("changePassword", {
+      "oldPassword": oldPassword ?? "",
+      "newPassword": newPassword ?? "",
+    });
+  }
+
   static Future<ForgotPasswordResult> forgotPassword(String username) async {
     return ForgotPasswordResult.fromMsg(
       await invokeMethod("forgotPassword", {"username": username ?? ""}),

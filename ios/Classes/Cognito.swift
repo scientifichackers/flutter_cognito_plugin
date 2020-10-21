@@ -94,6 +94,18 @@ class Cognito {
         )
     }
 
+    func changePassword(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        let args = call.arguments as! [String: Any?]
+        let oldPassword = args["oldPassword"] as! String
+        let newPassword = args["newPassword"] as! String
+
+        awsClient.changePassword(
+            currentPassword: oldPassword,
+            proposedPassword: newPassword,
+            completionHandler: createErrorCallback(result)
+        )
+    }
+
     func forgotPassword(call: FlutterMethodCall, result: @escaping FlutterResult) {
         let args = call.arguments as! [String: Any?]
         let username = args["username"] as! String
