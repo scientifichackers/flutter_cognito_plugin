@@ -41,6 +41,6 @@ android {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'com.amazonaws:aws-android-sdk-mobile-client:2.16.12'
-    implementation 'com.amazonaws:aws-android-sdk-cognitoauth:2.16.12'
+    implementation 'com.amazonaws:aws-android-sdk-mobile-client:2.18.0'
+    implementation 'com.amazonaws:aws-android-sdk-cognitoauth:2.18.0'
 }
