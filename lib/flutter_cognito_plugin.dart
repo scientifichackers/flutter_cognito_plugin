@@ -102,10 +102,10 @@ class Cognito {
   /// ```
   ///
   /// Returns the value of [Cognito.getCurrentUserState()].
-  static Future<UserState> initialize() async {
+  static Future<UserState> initialize({String configuration}) async {
     // don't trust the UserState returned by this
     // https://github.com/aws-amplify/aws-sdk-android/issues/873
-    await invokeMethod("initialize");
+    await invokeMethod("initialize", {"configuration": configuration});
 
     var userState = await Cognito.getCurrentUserState();
 

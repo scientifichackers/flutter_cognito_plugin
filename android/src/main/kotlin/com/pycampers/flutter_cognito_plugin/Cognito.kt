@@ -14,6 +14,7 @@ import com.amazonaws.mobile.client.results.SignInResult
 import com.amazonaws.mobile.client.results.SignUpResult
 import com.amazonaws.mobile.client.results.Tokens
 import com.amazonaws.mobile.client.results.UserCodeDeliveryDetails
+import com.amazonaws.mobile.config.AWSConfiguration
 import com.pycampers.plugin_scaffold.sendThrowable
 import com.pycampers.plugin_scaffold.trySend
 import io.flutter.plugin.common.MethodCall
@@ -24,7 +25,10 @@ class Cognito(val context: Context) {
     val awsClient = AWSMobileClient.getInstance()!!
 
     fun initialize(call: MethodCall, result: Result) {
-        awsClient.initialize(context, object : Callback<UserStateDetails> {
+        val configuration = call.argument<String>("configuration")
+        val awsConfig = AWSConfiguration(context)
+        if (configuration != null) awsConfig.configuration = configuration
+        awsClient.initialize(context, awsConfig, object : Callback<UserStateDetails> {
             override fun onResult(u: UserStateDetails) {
                 trySend(result) { dumpUserState(u) }
             }
