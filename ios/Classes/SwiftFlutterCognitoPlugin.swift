@@ -58,7 +58,7 @@ public class SwiftFlutterCognitoPlugin: NSObject, FlutterPlugin {
                 "showSignIn": plugin.showSignIn,
             ]
         )
-        plugin.awsClient.addUserStateListener("test" as NSString) { userState, _ in
+        plugin.userStateCallback = { userState, _ in
             channel.invokeMethod("userStateCallback", arguments: dumpUserState(userState))
         }
     }

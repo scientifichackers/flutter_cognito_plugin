@@ -5,7 +5,13 @@ import plugin_scaffold
 typealias CompletionCallback<T> = (T?, Error?) -> Void
 
 class Cognito {
-    let awsClient = AWSMobileClient.default()
+    var awsClient: AWSMobileClient?
+    var userStateCallback: UserStateChangeCallback?
+    private lazy var notInitializedError = FlutterError(
+        code: "NotInitialized",
+        message: "Call the initialize method first.",
+        details: nil
+    )
 
     func createErrorCallback(_ result: @escaping FlutterResult) -> (Error?) -> Void {
         return { error in
@@ -31,10 +37,39 @@ class Cognito {
     }
 
     func initialize(call: FlutterMethodCall, result: @escaping FlutterResult) {
-        self.awsClient.initialize(self.createCallback(result, dumpUserState))
+        let args = call.arguments as! [String: Any?]
+        if let configuration = args["configuration"] as? String,
+           let url = Bundle.main.url(forResource: "awsconfiguration", withExtension: "json"),
+           let data = try? Data(contentsOf: url),
+           let obj = try? JSONSerialization.jsonObject(with: data) as? [String:Any] {
+            var config:[String: Any] = [:]
+            obj.forEach { (key, value) in
+                if var value = value as? [String:Any],
+                   let newval = value[configuration] {
+                    value["Default"] = newval
+                    value[configuration] = nil
+                    config[key] = value
+                } else {
+                    config[key] = value
+                }
+            }
+            self.awsClient = AWSMobileClient(configuration: config)
+        } else {
+            self.awsClient = AWSMobileClient.default()
+        }
+        if let callback = userStateCallback {
+            let obj = "test" as NSString
+            self.awsClient?.removeUserStateListener(obj)
+            self.awsClient?.addUserStateListener(obj, callback)
+        }
+        self.awsClient?.initialize(self.createCallback(result, dumpUserState))
     }
 
     func signUp(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        guard let awsClient = self.awsClient else {
+            result(notInitializedError)
+            return
+        }
         let args = call.arguments as! [String: Any?]
         let username = args["username"] as! String
         let password = args["password"] as! String
@@ -50,6 +85,10 @@ class Cognito {
     }
 
     func confirmSignUp(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        guard let awsClient = self.awsClient else {
+            result(notInitializedError)
+            return
+        }
         let args = call.arguments as! [String: Any?]
         let username = args["username"] as! String
         let confirmationCode = args["confirmationCode"] as! String
@@ -62,6 +101,10 @@ class Cognito {
     }
 
     func resendSignUp(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        guard let awsClient = self.awsClient else {
+            result(notInitializedError)
+            return
+        }
         let args = call.arguments as! [String: Any?]
         let username = args["username"] as! String
 
@@ -72,6 +115,10 @@ class Cognito {
     }
 
     func signIn(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        guard let awsClient = self.awsClient else {
+            result(notInitializedError)
+            return
+        }
         let args = call.arguments as! [String: Any?]
         let username = args["username"] as! String
         let password = args["password"] as! String
@@ -85,6 +132,10 @@ class Cognito {
     }
 
     func confirmSignIn(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        guard let awsClient = self.awsClient else {
+            result(notInitializedError)
+            return
+        }
         let args = call.arguments as! [String: Any?]
         let confirmationCode = args["confirmationCode"] as! String
 
@@ -95,6 +146,10 @@ class Cognito {
     }
 
     func changePassword(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        guard let awsClient = self.awsClient else {
+            result(notInitializedError)
+            return
+        }
         let args = call.arguments as! [String: Any?]
         let oldPassword = args["oldPassword"] as! String
         let newPassword = args["newPassword"] as! String
@@ -107,6 +162,10 @@ class Cognito {
     }
 
     func forgotPassword(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        guard let awsClient = self.awsClient else {
+            result(notInitializedError)
+            return
+        }
         let args = call.arguments as! [String: Any?]
         let username = args["username"] as! String
 
@@ -117,6 +176,10 @@ class Cognito {
     }
 
     func confirmForgotPassword(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        guard let awsClient = self.awsClient else {
+            result(notInitializedError)
+            return
+        }
         let args = call.arguments as! [String: Any?]
         let username = args["username"] as! String
         let newPassword = args["newPassword"] as! String
@@ -131,6 +194,10 @@ class Cognito {
     }
 
     func updateUserAttributes(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        guard let awsClient = self.awsClient else {
+            result(notInitializedError)
+            return
+        }
         let args = call.arguments as! [String: Any?]
         let userAttributes = args["userAttributes"] as! [String: String]
 
@@ -143,10 +210,18 @@ class Cognito {
     }
 
     func getUserAttributes(call: FlutterMethodCall, result: @escaping FlutterResult) {
-        self.awsClient.getUserAttributes(completionHandler: self.createCallback(result))
+        guard let awsClient = self.awsClient else {
+            result(notInitializedError)
+            return
+        }
+        awsClient.getUserAttributes(completionHandler: self.createCallback(result))
     }
 
     func confirmUpdateUserAttribute(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        guard let awsClient = self.awsClient else {
+            result(notInitializedError)
+            return
+        }
         let args = call.arguments as! [String: Any?]
         let attributeName = args["attributeName"] as! String
         let confirmationCode = args["confirmationCode"] as! String
@@ -158,35 +233,67 @@ class Cognito {
     }
 
     func signOut(call: FlutterMethodCall, result: @escaping FlutterResult) {
-        self.awsClient.signOut()
+        guard let awsClient = self.awsClient else {
+            result(notInitializedError)
+            return
+        }
+        awsClient.signOut()
         result(nil)
     }
 
     func getUsername(call: FlutterMethodCall, result: @escaping FlutterResult) {
-        result(self.awsClient.username)
+        guard let awsClient = self.awsClient else {
+            result(notInitializedError)
+            return
+        }
+        result(awsClient.username)
     }
 
     func isSignedIn(call: FlutterMethodCall, result: @escaping FlutterResult) {
-        result(self.awsClient.isSignedIn)
+        guard let awsClient = self.awsClient else {
+            result(notInitializedError)
+            return
+        }
+        result(awsClient.isSignedIn)
     }
 
     func getIdentityId(call: FlutterMethodCall, result: @escaping FlutterResult) {
-        result(self.awsClient.identityId)
+        guard let awsClient = self.awsClient else {
+            result(notInitializedError)
+            return
+        }
+        result(awsClient.identityId)
     }
 
     func currentUserState(call: FlutterMethodCall, result: @escaping FlutterResult) {
-        result(dumpUserState(self.awsClient.currentUserState))
+        guard let awsClient = self.awsClient else {
+            result(notInitializedError)
+            return
+        }
+        result(dumpUserState(awsClient.currentUserState))
     }
 
     func getTokens(call: FlutterMethodCall, result: @escaping FlutterResult) {
-        self.awsClient.getTokens(self.createCallback(result, dumpTokens))
+        guard let awsClient = self.awsClient else {
+            result(notInitializedError)
+            return
+        }
+        awsClient.getTokens(self.createCallback(result, dumpTokens))
     }
 
     func getCredentials(call: FlutterMethodCall, result: @escaping FlutterResult) {
-        self.awsClient.getAWSCredentials(self.createCallback(result, dumpCredentials))
+        guard let awsClient = self.awsClient else {
+            result(notInitializedError)
+            return
+        }
+        awsClient.getAWSCredentials(self.createCallback(result, dumpCredentials))
     }
 
     func federatedSignIn(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        guard let awsClient = self.awsClient else {
+            result(notInitializedError)
+            return
+        }
         let args = call.arguments as! [String: Any?]
         let providerName = args["providerName"] as! String
         let token = args["token"] as! String
@@ -199,6 +306,10 @@ class Cognito {
     }
 
     func showSignIn(call: FlutterMethodCall, result: @escaping FlutterResult) {
+        guard let awsClient = self.awsClient else {
+            result(notInitializedError)
+            return
+        }
         let navigationController = CognitoPluginAppDelegate.navigationController
         if navigationController == nil {
             let error = FlutterError(
@@ -217,7 +328,7 @@ class Cognito {
             let hostedUIOptions = HostedUIOptions(scopes: scopes, identityProvider: identityProvider)
 
             // Present the Hosted UI sign in.
-            self.awsClient.showSignIn(
+            awsClient.showSignIn(
                 navigationController: navigationController!,
                 hostedUIOptions: hostedUIOptions,
                 createCallback(result, dumpUserState)
